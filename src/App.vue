@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import CrashSimulator from './components/CrashSimulator.vue';
 import FrontVisualizer from './components/FrontVisualizer.vue';
 import GarageManager from './components/GarageManager.vue';
 import KammCircle from './components/KammCircle.vue';
@@ -56,7 +57,7 @@ const longitudinalG = ref(0);
 const selectedSurface = ref<SurfaceCondition>('dry_track_supersport');
 
 // Active Tab
-const activeTab = ref<'calc' | 'garage' | 'presets'>('calc');
+const activeTab = ref<'calc' | 'garage' | 'presets' | 'crash'>('calc');
 
 // Computed physics telemetry
 const telemetry = computed<PhysicsResult>(() => {
@@ -218,6 +219,7 @@ function syncToUrlHash() {
     m: rider.value.massKg,
     s: selectedSurface.value,
     ax: longitudinalG.value,
+    t: activeTab.value,
   };
   try {
     history.replaceState(null, '', `#${encodeURIComponent(JSON.stringify(state))}`);
@@ -237,12 +239,15 @@ function loadFromUrlHash() {
     if (state.m) rider.value.massKg = Number(state.m);
     if (state.s) selectedSurface.value = state.s;
     if (state.ax !== undefined) longitudinalG.value = Number(state.ax);
+    if (state.t && ['calc', 'garage', 'presets', 'crash'].includes(state.t)) {
+      activeTab.value = state.t;
+    }
   } catch {
     // ignore
   }
 }
 
-watch([speedKmh, radiusM, longitudinalG, selectedSurface, rider, activeBike], syncToUrlHash, { deep: true });
+watch([speedKmh, radiusM, longitudinalG, selectedSurface, rider, activeBike, activeTab], syncToUrlHash, { deep: true });
 
 onMounted(boot);
 </script>
@@ -325,6 +330,14 @@ onMounted(boot);
         >
           🏍️ Garage &amp; Geometry Catalog ({{ bikes.length }})
         </button>
+        <button
+          type="button"
+          class="tab-btn"
+          :class="{ active: activeTab === 'crash' }"
+          @click="activeTab = 'crash'"
+        >
+          💥 Crash Kinematics &amp; Gear
+        </button>
       </nav>
     </header>
 
@@ -387,7 +400,16 @@ onMounted(boot);
         />
       </section>
 
-      <!-- TAB 3: LIVE DYNAMICS CALCULATOR & VISUALIZATIONS -->
+      <!-- TAB 3: CRASH KINEMATICS & GEAR SIMULATOR -->
+      <section v-if="activeTab === 'crash'" class="card">
+        <CrashSimulator
+          :telemetrySpeedKmh="speedKmh"
+          :riderMassKg="rider.massKg"
+          :useImperial="useImperial"
+        />
+      </section>
+
+      <!-- TAB 4: LIVE DYNAMICS CALCULATOR & VISUALIZATIONS -->
       <div v-show="activeTab === 'calc'" class="calculator-view">
         <!-- Lean Auto-Optimizer Quick Bar -->
         <section class="card quick-actions-card">

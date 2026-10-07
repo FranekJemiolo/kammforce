@@ -13,8 +13,9 @@ Offline-first, serverless PWA for motorcycle grip and lean-limit calculations
 ## Screenshots
 
 <p align="center">
-  <img src="docs/screenshots/desktop.png" alt="KammForce desktop: system status and motorcycle database" width="720" />
-  <img src="docs/screenshots/mobile.png" alt="KammForce on mobile" width="220" />
+  <img src="docs/screenshots/desktop.png" alt="KammForce desktop: system status and motorcycle database" width="480" />
+  <img src="docs/screenshots/crash_simulator.png" alt="KammForce Crash Kinematics: Work-Energy slide distance and tumble risk" width="480" />
+  <img src="docs/screenshots/mobile.png" alt="KammForce on mobile" width="180" />
 </p>
 
 Regenerate them after UI changes (builds the app, serves it, captures with Playwright):
@@ -41,6 +42,7 @@ python scraper/scraper.py --targets scraper/targets.yaml --output public/data
 2. ✅ **Phase 2: Frontend & Wasm Database** (Vite PWA, `@sqlite.org/sqlite-wasm` inside Web Worker with OPFS, custom COOP/COEP isolation SW, localForage IndexedDB garage).
 3. ✅ **Phase 3: Physics Engine** (Newton-Raphson transcendental toroidal solver, Pacejka '94 Magic Formula + Camber Thrust cone model, 2D rider hang-off kinematics, 11/11 Vitest tests).
 4. ✅ **Phase 4: UI & Visualizations** (Real-time SVG Dynamic Roll Profile with contact patch migration, Kamm Traction Circle ellipse with trail-braking/throttle slider, famous track corner presets, multi-unit toggles, shareable URL hash).
+5. ✅ **Phase 5: Crash Kinematics & Gear Simulation** (Work-Energy Theorem low-side stopping distance & duration, kinetic friction $\mu_k$ catalog for Kangaroo/Cowhide/Cordura/Kevlar/Denim/Sliders, rotational tumble risk predictor for $\mu_k > 0.6$, synthetic melt-through thermal warnings, interactive asphalt/gravel runoff buffer runway, 18/18 Vitest tests).
 
 ## Physics & Equations
 
@@ -55,4 +57,9 @@ python scraper/scraper.py --targets scraper/targets.yaml --output public/data
 - **Kamm Traction Ellipse:**
   $$\left(\frac{F_x}{\mu_x F_z}\right)^2 + \left(\frac{F_y}{\mu_y F_z}\right)^2 \le 1$$
   Calculates available longitudinal braking/acceleration reserve while leaned over.
+- **Low-Side Crash Kinematics (Work-Energy Theorem):**
+  $$d = \frac{v^2}{2 \mu_k g}, \quad t = \frac{v}{\mu_k g}$$
+  Mass ($m$) cancels out of the slide distance and duration, meaning heavier riders slide the same distance but dissipate proportionally higher kinetic energy ($KE = \frac{1}{2}mv^2$) as localized thermal heat.
+- **Rotational Tumble Risk:**
+  When $\mu_k > 0.60$ (such as street denim $\mu_k = 0.70$), high friction snags pavement aggregate, converting a controlled flat slide into violent rotational tumble torque that drastically increases bone fracture and joint dislocation risk.
 

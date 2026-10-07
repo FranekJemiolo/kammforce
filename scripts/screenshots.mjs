@@ -39,6 +39,17 @@ try {
     await page.waitForTimeout(700); // let entry animations settle
     await page.screenshot({ path: `${OUT}/${s.name}.png`, fullPage: true });
     console.log(`saved ${OUT}/${s.name}.png`);
+
+    if (s.name === 'desktop') {
+      // Also capture the Crash Kinematics tab
+      const crashTabBtn = page.locator('button.tab-btn:has-text("Crash Kinematics")');
+      await crashTabBtn.click();
+      await page.waitForSelector('.crash-sim-panel', { timeout: 10000 });
+      await page.waitForTimeout(500);
+      await page.screenshot({ path: `${OUT}/crash_simulator.png`, fullPage: true });
+      console.log(`saved ${OUT}/crash_simulator.png`);
+    }
+
     await ctx.close();
   }
   await browser.close();
