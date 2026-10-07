@@ -8,7 +8,24 @@ models:
   trail_mm: 102
   cog_height_mm: 612
   mass_kg: 201
-  max_mech_lean_deg: 57
+  max_mech_lean_deg: 58
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 200_55_17
   compatible_front_tires: [120_70_17]
   compatible_rear_tires: [200_55_17, 190_55_17]
+  cog_source: image
+
+- id: hon_cbr600rr_2024
+  name: CBR600RR
+  year: 2024
+  wheelbase_mm: 1370
+  rake_deg: 24.0
+  trail_mm: 100
+  cog_height_mm: 590
+  mass_kg: 193
+  max_mech_lean_deg: 56
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17, 180_60_17]
   cog_source: heuristic

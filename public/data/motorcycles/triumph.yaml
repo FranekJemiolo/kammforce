@@ -1,0 +1,46 @@
+brand: Triumph
+models:
+- id: tri_street_triple_765_rs_2024
+  name: Street Triple 765 RS
+  year: 2024
+  wheelbase_mm: 1399
+  rake_deg: 23.2
+  trail_mm: 97
+  cog_height_mm: 605
+  mass_kg: 188
+  max_mech_lean_deg: 54
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17, 180_60_17]
+  cog_source: image
+
+- id: tri_speed_triple_1200_rs_2024
+  name: Speed Triple 1200 RS
+  year: 2024
+  wheelbase_mm: 1445
+  rake_deg: 23.9
+  trail_mm: 104
+  cog_height_mm: 620
+  mass_kg: 198
+  max_mech_lean_deg: 54
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 190_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [190_55_17, 200_55_17]
+  cog_source: image
+
+- id: tri_daytona_660_2024
+  name: Daytona 660
+  year: 2024
+  wheelbase_mm: 1425
+  rake_deg: 23.8
+  trail_mm: 98
+  cog_height_mm: 595
+  mass_kg: 201
+  max_mech_lean_deg: 52
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17]
+  cog_source: heuristic

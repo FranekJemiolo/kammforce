@@ -40,8 +40,8 @@ function onPickPreset(row: MotorcycleRow) {
     massKg: row.mass_kg ?? 200,
     cogHeightMm: row.cog_height_mm ?? 610,
     maxMechLeanDeg: row.max_mech_lean_deg ?? 56,
-    frontTireSize: '120_70_17',
-    rearTireSize: '190_55_17',
+    frontTireSize: row.oem_front_tire ?? '120_70_17',
+    rearTireSize: row.oem_rear_tire ?? '190_55_17',
   });
 }
 

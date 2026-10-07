@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS meta (
@@ -17,7 +17,9 @@ CREATE TABLE IF NOT EXISTS motorcycles (
   cog_height_mm     INTEGER,
   mass_kg           INTEGER,
   max_mech_lean_deg INTEGER,
-  cog_source        TEXT
+  cog_source        TEXT,
+  oem_front_tire    TEXT,
+  oem_rear_tire     TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_motorcycles_make ON motorcycles(make, year);
 

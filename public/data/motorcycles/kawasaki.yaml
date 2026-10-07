@@ -1,5 +1,20 @@
 brand: Kawasaki
 models:
+- id: kaw_ninja_zx10rr_2024
+  name: Ninja ZX-10RR
+  year: 2024
+  wheelbase_mm: 1450
+  rake_deg: 25.0
+  trail_mm: 105
+  cog_height_mm: 612
+  mass_kg: 206
+  max_mech_lean_deg: 58
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 190_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [190_55_17, 200_55_17]
+  cog_source: image
+
 - id: kaw_ninja_zx10r_2024
   name: Ninja ZX-10R
   year: 2024
@@ -9,6 +24,23 @@ models:
   cog_height_mm: 614
   mass_kg: 207
   max_mech_lean_deg: 56
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 190_55_17
   compatible_front_tires: [120_70_17]
   compatible_rear_tires: [190_55_17]
+  cog_source: heuristic
+
+- id: kaw_ninja_zx6r_2024
+  name: Ninja ZX-6R 636
+  year: 2024
+  wheelbase_mm: 1400
+  rake_deg: 23.5
+  trail_mm: 101
+  cog_height_mm: 595
+  mass_kg: 198
+  max_mech_lean_deg: 56
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17]
   cog_source: heuristic

@@ -1,0 +1,46 @@
+brand: Aprilia
+models:
+- id: apr_rsv4_factory_1100_2024
+  name: RSV4 Factory 1100
+  year: 2024
+  wheelbase_mm: 1439
+  rake_deg: 24.6
+  trail_mm: 104
+  cog_height_mm: 615
+  mass_kg: 202
+  max_mech_lean_deg: 59
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 200_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_55_17, 200_60_17]
+  cog_source: image
+
+- id: apr_tuono_v4_factory_2024
+  name: Tuono V4 Factory
+  year: 2024
+  wheelbase_mm: 1450
+  rake_deg: 24.8
+  trail_mm: 100
+  cog_height_mm: 625
+  mass_kg: 209
+  max_mech_lean_deg: 54
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 200_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_55_17, 190_55_17]
+  cog_source: heuristic
+
+- id: apr_rs_660_2024
+  name: RS 660 Extrema
+  year: 2024
+  wheelbase_mm: 1370
+  rake_deg: 24.1
+  trail_mm: 104
+  cog_height_mm: 588
+  mass_kg: 180
+  max_mech_lean_deg: 55
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17, 180_60_17]
+  cog_source: image

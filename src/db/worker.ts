@@ -83,8 +83,8 @@ async function hydrate(force = false): Promise<HydrateResult> {
     db.exec('DELETE FROM motorcycle_tire_fitments; DELETE FROM motorcycles;');
     const bike = db.prepare(
       `INSERT OR REPLACE INTO motorcycles
-       (id, make, model, year, wheelbase_mm, rake_deg, trail_mm, cog_height_mm, mass_kg, max_mech_lean_deg, cog_source)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (id, make, model, year, wheelbase_mm, rake_deg, trail_mm, cog_height_mm, mass_kg, max_mech_lean_deg, cog_source, oem_front_tire, oem_rear_tire)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     );
     const fit = db.prepare(
       'INSERT OR IGNORE INTO motorcycle_tire_fitments (motorcycle_id, position, tire_size) VALUES (?, ?, ?)',
@@ -92,12 +92,15 @@ async function hydrate(force = false): Promise<HydrateResult> {
     try {
       for (const f of files) {
         for (const m of f.models ?? []) {
+          const oemFront = (m.oem_front_tire as string | undefined) ?? (m.compatible_front_tires as string[] | undefined)?.[0] ?? '120_70_17';
+          const oemRear = (m.oem_rear_tire as string | undefined) ?? (m.compatible_rear_tires as string[] | undefined)?.[0] ?? '190_55_17';
           bike
             .bind([
               m.id, f.brand, m.name, m.year,
               m.wheelbase_mm ?? null, m.rake_deg ?? null, m.trail_mm ?? null,
               m.cog_height_mm ?? null, m.mass_kg ?? null, m.max_mech_lean_deg ?? null,
               m.cog_source ?? null,
+              oemFront, oemRear,
             ])
             .stepReset();
           for (const [key, pos] of [['compatible_front_tires', 'front'], ['compatible_rear_tires', 'rear']] as const) {

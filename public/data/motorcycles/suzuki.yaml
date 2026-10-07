@@ -1,0 +1,46 @@
+brand: Suzuki
+models:
+- id: suz_gsxr_1000r_2024
+  name: GSX-R1000R
+  year: 2024
+  wheelbase_mm: 1420
+  rake_deg: 23.2
+  trail_mm: 95
+  cog_height_mm: 610
+  mass_kg: 203
+  max_mech_lean_deg: 56
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 190_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [190_55_17, 200_55_17]
+  cog_source: image
+
+- id: suz_gsxr_750_2024
+  name: GSX-R750
+  year: 2024
+  wheelbase_mm: 1390
+  rake_deg: 23.4
+  trail_mm: 97
+  cog_height_mm: 598
+  mass_kg: 190
+  max_mech_lean_deg: 56
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17]
+  cog_source: heuristic
+
+- id: suz_hayabusa_gen3_2024
+  name: Hayabusa (GSX1300R Gen 3)
+  year: 2024
+  wheelbase_mm: 1480
+  rake_deg: 23.0
+  trail_mm: 90
+  cog_height_mm: 635
+  mass_kg: 264
+  max_mech_lean_deg: 49
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 190_50_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [190_50_17, 190_55_17]
+  cog_source: image

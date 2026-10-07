@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import FrontVisualizer from './components/FrontVisualizer.vue';
 import GarageManager from './components/GarageManager.vue';
 import KammCircle from './components/KammCircle.vue';
 import LeanVisualizer from './components/LeanVisualizer.vue';
+import SideVisualizer from './components/SideVisualizer.vue';
 import TrackPresets, { type TrackCorner } from './components/TrackPresets.vue';
 import { DbClient } from './db/client';
 import type { MotorcycleRow } from './db/types';
-import { KMH_TO_MS, MS_TO_KMH, MS_TO_MPH, MPH_TO_MS } from './physics/constants';
+import { KMH_TO_MS, MS_TO_KMH } from './physics/constants';
+import { solveHangOffForLeanSafety, solveRadiusForTargetLean, solveSpeedForTargetLean } from './physics/optimizer';
 import { solveCornerTelemetry } from './physics/solver';
 import { SURFACE_COMPOUNDS } from './physics/tires';
 import type { MotorcycleConfig, PhysicsResult, RiderConfig, SurfaceCondition } from './physics/types';
@@ -24,6 +27,9 @@ let db: DbClient | undefined;
 
 // Unit Preferences
 const useImperial = ref(false); // false = Metric (km/h, m, kg), true = Imperial (mph, ft, lbs)
+
+// Multi-Angle Visualizer Selection
+const visualizerAngle = ref<'rear' | 'front' | 'side'>('rear');
 
 // Active Motorcycle Config
 const activeBike = ref<MotorcycleConfig>({
@@ -71,7 +77,6 @@ const telemetry = computed<PhysicsResult>(() => {
 const maxSafeSpeedKmh = computed(() => {
   const compound = SURFACE_COMPOUNDS[selectedSurface.value];
   const maxAy = compound.muPeak * 9.80665;
-  // v_max = sqrt(ay_max * R)
   const maxV = Math.sqrt(maxAy * radiusM.value);
   return maxV * MS_TO_KMH;
 });
@@ -83,6 +88,56 @@ const minSafeRadiusM = computed(() => {
   const speedMs = speedKmh.value * KMH_TO_MS;
   return (speedMs * speedMs) / maxAy;
 });
+
+// Optimizer Actions
+function setToMaxMechLeanSpeed() {
+  const opt = solveSpeedForTargetLean(
+    activeBike.value,
+    rider.value,
+    activeBike.value.maxMechLeanDeg,
+    radiusM.value,
+    selectedSurface.value
+  );
+  speedKmh.value = Math.round(opt.requiredSpeedKmh);
+}
+
+function setToMaxMechLeanRadius() {
+  const speedMs = speedKmh.value * KMH_TO_MS;
+  const reqRadius = solveRadiusForTargetLean(
+    activeBike.value,
+    rider.value,
+    activeBike.value.maxMechLeanDeg,
+    speedMs
+  );
+  radiusM.value = Math.max(10, Math.round(reqRadius));
+}
+
+function setToTargetLean(targetDeg: number) {
+  const opt = solveSpeedForTargetLean(
+    activeBike.value,
+    rider.value,
+    targetDeg,
+    radiusM.value,
+    selectedSurface.value
+  );
+  speedKmh.value = Math.max(20, Math.round(opt.requiredSpeedKmh));
+}
+
+function optimizeHangOff() {
+  const currentAy = ((speedKmh.value * KMH_TO_MS) ** 2) / radiusM.value;
+  const safeTargetLean = Math.max(30, activeBike.value.maxMechLeanDeg - 4);
+  const optHangOff = solveHangOffForLeanSafety(
+    activeBike.value,
+    rider.value,
+    currentAy,
+    safeTargetLean
+  );
+  rider.value.hangOffCm = optHangOff;
+}
+
+function setToMaxGripLimit() {
+  speedKmh.value = Math.round(maxSafeSpeedKmh.value * 0.99);
+}
 
 // Database & Hydration Lifecycle
 async function refreshBikes() {
@@ -99,8 +154,8 @@ async function refreshBikes() {
           massKg: match.mass_kg ?? 200,
           cogHeightMm: match.cog_height_mm ?? 610,
           maxMechLeanDeg: match.max_mech_lean_deg ?? 56,
-          frontTireSize: '120_70_17',
-          rearTireSize: '190_55_17',
+          frontTireSize: match.oem_front_tire ?? '120_70_17',
+          rearTireSize: match.oem_rear_tire ?? '190_55_17',
         };
       }
     }
@@ -153,7 +208,7 @@ function onCornerSelected(c: TrackCorner) {
   activeTab.value = 'calc';
 }
 
-// URL Hash State Serialization for sharing telemetry setups
+// URL Hash State Serialization
 function syncToUrlHash() {
   const state = {
     b: activeBike.value.id,
@@ -183,7 +238,7 @@ function loadFromUrlHash() {
     if (state.s) selectedSurface.value = state.s;
     if (state.ax !== undefined) longitudinalG.value = Number(state.ax);
   } catch {
-    // ignore malformed hash
+    // ignore
   }
 }
 
@@ -213,6 +268,13 @@ onMounted(boot);
         </div>
 
         <div class="header-right">
+          <!-- Active Bike Quick Badge -->
+          <div class="active-bike-badge" @click="activeTab = 'garage'">
+            <span class="active-badge-tag">ACTIVE SETUP:</span>
+            <span class="active-badge-name">{{ activeBike.name }}</span>
+            <span class="tire-specs">{{ activeBike.frontTireSize }} / {{ activeBike.rearTireSize }}</span>
+          </div>
+
           <!-- Unit Toggle Button -->
           <button type="button" class="unit-toggle" @click="useImperial = !useImperial">
             {{ useImperial ? '🇺🇸 Imperial (mph, ft)' : '🇪🇺 Metric (km/h, m)' }}
@@ -245,7 +307,7 @@ onMounted(boot);
           :class="{ active: activeTab === 'calc' }"
           @click="activeTab = 'calc'"
         >
-          ⚡ Live Dynamics Calculator
+          ⚡ Live Dynamics Cockpit
         </button>
         <button
           type="button"
@@ -253,7 +315,7 @@ onMounted(boot);
           :class="{ active: activeTab === 'presets' }"
           @click="activeTab = 'presets'"
         >
-          🏁 Circuit Presets
+          🏁 Circuit Corner Presets
         </button>
         <button
           type="button"
@@ -261,7 +323,7 @@ onMounted(boot);
           :class="{ active: activeTab === 'garage' }"
           @click="activeTab = 'garage'"
         >
-          🏍️ Garage &amp; Geometry Setup ({{ bikes.length }})
+          🏍️ Garage &amp; Geometry Catalog ({{ bikes.length }})
         </button>
       </nav>
     </header>
@@ -327,6 +389,34 @@ onMounted(boot);
 
       <!-- TAB 3: LIVE DYNAMICS CALCULATOR & VISUALIZATIONS -->
       <div v-show="activeTab === 'calc'" class="calculator-view">
+        <!-- Lean Auto-Optimizer Quick Bar -->
+        <section class="card quick-actions-card">
+          <div class="actions-header">
+            <span class="section-tag">LEAN &amp; SPEED OPTIMIZERS</span>
+            <span class="section-hint">Instantly solve required parameters to match target lean angle or grip limit:</span>
+          </div>
+          <div class="quick-btn-row">
+            <button type="button" class="opt-btn" @click="setToMaxMechLeanSpeed">
+              🎯 Set Speed for Max Lean ({{ activeBike.maxMechLeanDeg }}°)
+            </button>
+            <button type="button" class="opt-btn" @click="setToMaxMechLeanRadius">
+              📐 Set Radius for Max Lean ({{ activeBike.maxMechLeanDeg }}°)
+            </button>
+            <button type="button" class="opt-btn" @click="setToTargetLean(50)">
+              📍 Set Speed to 50.0° Lean
+            </button>
+            <button type="button" class="opt-btn" @click="setToTargetLean(55)">
+              📍 Set Speed to 55.0° Lean
+            </button>
+            <button type="button" class="opt-btn highlight" @click="setToMaxGripLimit">
+              ⚡ Set to 100% Grip Limit
+            </button>
+            <button type="button" class="opt-btn ok" @click="optimizeHangOff">
+              🛡️ Auto-Hang-off for 4° Margin
+            </button>
+          </div>
+        </section>
+
         <!-- Interactive Controls Card -->
         <section class="card controls-card">
           <h2>Cornering &amp; Rider Telemetry Controls</h2>
@@ -423,13 +513,61 @@ onMounted(boot);
           </div>
         </section>
 
+        <!-- Multi-Angle Visualizer Cockpit Navigation -->
+        <div class="angle-selector-bar">
+          <div class="angle-title">Multi-Angle Dynamic View:</div>
+          <div class="angle-btn-group">
+            <button
+              type="button"
+              class="angle-btn"
+              :class="{ active: visualizerAngle === 'rear' }"
+              @click="visualizerAngle = 'rear'"
+            >
+              🔄 Rear Dynamic Roll Profile
+            </button>
+            <button
+              type="button"
+              class="angle-btn"
+              :class="{ active: visualizerAngle === 'front' }"
+              @click="visualizerAngle = 'front'"
+            >
+              🏍️ Front Aero &amp; Knee-Down
+            </button>
+            <button
+              type="button"
+              class="angle-btn"
+              :class="{ active: visualizerAngle === 'side' }"
+              @click="visualizerAngle = 'side'"
+            >
+              📐 Side Chassis &amp; CoG Ruler
+            </button>
+          </div>
+        </div>
+
         <!-- Twin Visualizers Row -->
         <div class="visualizers-row">
-          <LeanVisualizer
-            :telemetry="telemetry"
-            :maxMechLeanDeg="activeBike.maxMechLeanDeg"
-            :riderHangOffCm="rider.hangOffCm"
-          />
+          <!-- Active Angle Visualizer -->
+          <div class="angle-container">
+            <LeanVisualizer
+              v-if="visualizerAngle === 'rear'"
+              :telemetry="telemetry"
+              :maxMechLeanDeg="activeBike.maxMechLeanDeg"
+              :riderHangOffCm="rider.hangOffCm"
+            />
+            <FrontVisualizer
+              v-else-if="visualizerAngle === 'front'"
+              :telemetry="telemetry"
+              :maxMechLeanDeg="activeBike.maxMechLeanDeg"
+              :riderHangOffCm="rider.hangOffCm"
+            />
+            <SideVisualizer
+              v-else-if="visualizerAngle === 'side'"
+              :bike="activeBike"
+              :riderMassKg="rider.massKg"
+            />
+          </div>
+
+          <!-- Kamm Traction Circle -->
           <KammCircle
             :telemetry="telemetry"
             :longitudinalG="longitudinalG"
@@ -481,7 +619,7 @@ onMounted(boot);
 
 <style scoped>
 .app-layout {
-  max-width: 1240px;
+  max-width: 1260px;
   margin: 0 auto;
   padding: 1.5rem 1rem 4rem;
   display: flex;
@@ -547,6 +685,21 @@ h1 {
   gap: 0.75rem;
   flex-wrap: wrap;
 }
+
+.active-bike-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 107, 61, 0.08);
+  border: 1px solid rgba(255, 107, 61, 0.3);
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.active-badge-tag { color: var(--muted); font-size: 0.65rem; font-weight: 700; }
+.active-badge-name { font-weight: 700; color: var(--text); }
+.tire-specs { color: var(--accent-2); font-size: 0.68rem; font-family: monospace; }
 
 .unit-toggle {
   font-size: 0.75rem;
@@ -689,6 +842,62 @@ h1 {
   gap: 1.25rem;
 }
 
+.quick-actions-card {
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.actions-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.section-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--accent-2);
+}
+.section-hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.quick-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.opt-btn {
+  font-size: 0.72rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.opt-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.opt-btn.highlight {
+  background: rgba(255, 107, 61, 0.15);
+  border-color: rgba(255, 107, 61, 0.35);
+  color: var(--accent-2);
+}
+.opt-btn.ok {
+  background: rgba(61, 220, 151, 0.12);
+  border-color: rgba(61, 220, 151, 0.3);
+  color: var(--ok);
+}
+
 .controls-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -730,6 +939,49 @@ h1 {
   color: var(--muted);
 }
 
+.angle-selector-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.25rem 0.5rem;
+}
+.angle-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.angle-btn-group {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.angle-btn {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.angle-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+}
+.angle-btn.active {
+  color: var(--accent-2);
+  background: rgba(255, 107, 61, 0.12);
+  border-color: rgba(255, 107, 61, 0.35);
+}
+
 .visualizers-row {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
@@ -740,6 +992,11 @@ h1 {
   .visualizers-row {
     grid-template-columns: 1fr;
   }
+}
+
+.angle-container {
+  display: flex;
+  flex-direction: column;
 }
 
 .breakdown-grid {

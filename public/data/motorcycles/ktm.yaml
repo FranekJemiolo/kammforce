@@ -1,0 +1,46 @@
+brand: KTM
+models:
+- id: ktm_1290_super_duke_r_evo_2024
+  name: 1290 Super Duke R EVO
+  year: 2024
+  wheelbase_mm: 1497
+  rake_deg: 25.2
+  trail_mm: 106
+  cog_height_mm: 630
+  mass_kg: 200
+  max_mech_lean_deg: 54
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 200_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_55_17]
+  cog_source: image
+
+- id: ktm_890_duke_r_2023
+  name: 890 Duke R ("The Scalpel")
+  year: 2023
+  wheelbase_mm: 1482
+  rake_deg: 24.3
+  trail_mm: 99
+  cog_height_mm: 615
+  mass_kg: 184
+  max_mech_lean_deg: 55
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17, 180_60_17]
+  cog_source: heuristic
+
+- id: ktm_rc_8c_2024
+  name: RC 8C (Track Only)
+  year: 2024
+  wheelbase_mm: 1400
+  rake_deg: 23.3
+  trail_mm: 98
+  cog_height_mm: 590
+  mass_kg: 142
+  max_mech_lean_deg: 62
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_60_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_60_17]
+  cog_source: image

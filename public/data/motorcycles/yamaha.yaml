@@ -1,5 +1,20 @@
 brand: Yamaha
 models:
+- id: yam_yzf_r1m_2024
+  name: YZF-R1M
+  year: 2024
+  wheelbase_mm: 1405
+  rake_deg: 24.0
+  trail_mm: 102
+  cog_height_mm: 610
+  mass_kg: 202
+  max_mech_lean_deg: 57
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 200_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_55_17, 190_55_17]
+  cog_source: image
+
 - id: yam_yzf_r1_2024
   name: YZF-R1
   year: 2024
@@ -9,5 +24,53 @@ models:
   cog_height_mm: 610
   mass_kg: 201
   max_mech_lean_deg: 56
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 190_55_17
   compatible_front_tires: [120_70_17]
   compatible_rear_tires: [190_55_17, 200_55_17]
+  cog_source: image
+
+- id: yam_yzf_r6_2020
+  name: YZF-R6 (Race Spec)
+  year: 2020
+  wheelbase_mm: 1375
+  rake_deg: 24.0
+  trail_mm: 97
+  cog_height_mm: 595
+  mass_kg: 190
+  max_mech_lean_deg: 57
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17, 180_60_17]
+  cog_source: heuristic
+
+- id: yam_yzf_r7_2024
+  name: YZF-R7
+  year: 2024
+  wheelbase_mm: 1395
+  rake_deg: 23.7
+  trail_mm: 90
+  cog_height_mm: 585
+  mass_kg: 188
+  max_mech_lean_deg: 53
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17]
+  cog_source: heuristic
+
+- id: yam_mt09_sp_2024
+  name: MT-09 SP
+  year: 2024
+  wheelbase_mm: 1430
+  rake_deg: 24.7
+  trail_mm: 108
+  cog_height_mm: 620
+  mass_kg: 193
+  max_mech_lean_deg: 51
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17]
+  cog_source: heuristic

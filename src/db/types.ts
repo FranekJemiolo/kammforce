@@ -27,4 +27,6 @@ export interface MotorcycleRow {
   mass_kg: number | null;
   max_mech_lean_deg: number | null;
   cog_source: string | null;
+  oem_front_tire?: string | null;
+  oem_rear_tire?: string | null;
 }
