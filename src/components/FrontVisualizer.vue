@@ -12,7 +12,8 @@ const groundY = 380;
 const originX = 300;
 const pxPerMeter = 320;
 
-const bikeLeanRad = computed(() => (props.telemetry.toroidalBikeLeanDeg * Math.PI) / 180);
+const bikeLeanDeg = computed(() => props.telemetry.toroidalBikeLeanDeg);
+const bikeLeanRad = computed(() => (bikeLeanDeg.value * Math.PI) / 180);
 const cpOffsetPx = computed(() => (props.telemetry.contactPatchOffsetMm / 1000) * pxPerMeter);
 const cpX = computed(() => originX + cpOffsetPx.value);
 
@@ -29,160 +30,318 @@ const kneeClearanceMm = computed(() => Math.max(0, Math.round((groundY - kneeY.v
 
 const isKneeDown = computed(() => kneeClearanceMm.value <= 15);
 const isScraping = computed(() => props.telemetry.isScrapingHardParts);
+
+// Mechanical lean limit line
+const maxMechRad = computed(() => (props.maxMechLeanDeg * Math.PI) / 180);
 </script>
 
 <template>
   <div class="front-vis-wrap">
     <div class="vis-header">
       <div class="title-wrap">
-        <span class="vis-title">Front Dynamic Lean &amp; Knee-Down View</span>
+        <span class="vis-title">Front Dynamic Aero &amp; Knee-Down View</span>
         <span class="badge" :class="isScraping ? 'bad' : isKneeDown ? 'warn' : 'ok'">
           {{ isScraping ? 'HARD PART SCRAPING' : isKneeDown ? 'KNEE DOWN (TOUCHING)' : 'AERO ENVELOPE' }}
         </span>
       </div>
-      <div class="knee-badge">
-        <span class="k">Knee Clearance:</span>
-        <span class="v" :class="isKneeDown ? 'accent' : 'ok'">{{ isKneeDown ? '0 mm (Puck down)' : `${kneeClearanceMm} mm` }}</span>
+      <div class="header-badges">
+        <div class="knee-badge">
+          <span class="k">Lean Angle:</span>
+          <span class="v accent">{{ bikeLeanDeg.toFixed(1) }}°</span>
+        </div>
+        <div class="knee-badge">
+          <span class="k">Knee Clearance:</span>
+          <span class="v" :class="isKneeDown ? 'warn' : 'ok'">{{ isKneeDown ? '0 mm (TOUCHING)' : `${kneeClearanceMm} mm` }}</span>
+        </div>
       </div>
     </div>
 
     <svg viewBox="0 0 600 440" class="front-canvas" preserveAspectRatio="xMidYMid meet">
       <defs>
-        <pattern id="asphalt-front" width="16" height="16" patternUnits="userSpaceOnUse">
-          <rect width="16" height="16" fill="#131822" />
-          <circle cx="4" cy="4" r="1" fill="#1d2535" />
-          <circle cx="12" cy="10" r="1.2" fill="#182030" />
-          <circle cx="8" cy="14" r="0.8" fill="#222c3e" />
+        <!-- Carbon fiber twill pattern -->
+        <pattern id="carbon-fiber" width="6" height="6" patternUnits="userSpaceOnUse">
+          <rect width="6" height="6" fill="#151921" />
+          <path d="M0 3 L3 0 L6 3 L3 6 Z" fill="#202735" />
+          <line x1="0" y1="0" x2="6" y2="6" stroke="#0f1218" stroke-width="0.8" />
         </pattern>
-        <filter id="headlight-glow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="8" result="blur" />
+
+        <!-- Asphalt front surface -->
+        <pattern id="asphalt-front" width="20" height="20" patternUnits="userSpaceOnUse">
+          <rect width="20" height="20" fill="#121722" />
+          <circle cx="4" cy="5" r="1.2" fill="#1c2436" />
+          <circle cx="15" cy="14" r="1.4" fill="#171e2e" />
+          <circle cx="10" cy="18" r="0.9" fill="#263147" />
+        </pattern>
+
+        <!-- Kerb pattern (red and white track curbing) -->
+        <pattern id="kerb-rumble" width="36" height="24" patternUnits="userSpaceOnUse">
+          <rect x="0" y="0" width="18" height="24" fill="#e53e3e" />
+          <rect x="18" y="0" width="18" height="24" fill="#edf2f7" />
+          <line x1="0" y1="0" x2="36" y2="0" stroke="#718096" stroke-width="1.5" />
+        </pattern>
+
+        <!-- Headlight neon beam glow -->
+        <filter id="headlight-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="6" result="blur" />
           <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
-        <linearGradient id="windshield-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#4fd1c5" stop-opacity="0.75" />
-          <stop offset="100%" stop-color="#234e52" stop-opacity="0.3" />
+
+        <!-- Iridium tinted visor gradient -->
+        <linearGradient id="iridium-visor" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#38b2ac" />
+          <stop offset="50%" stop-color="#9f7aea" />
+          <stop offset="100%" stop-color="#ed64a6" />
         </linearGradient>
+
+        <!-- Windshield gradient -->
+        <linearGradient id="windshield-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#319795" stop-opacity="0.8" />
+          <stop offset="100%" stop-color="#1d4044" stop-opacity="0.3" />
+        </linearGradient>
+
+        <!-- Gold titanium nitride fork coating -->
+        <linearGradient id="fork-gold" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#d69e2e" />
+          <stop offset="50%" stop-color="#f6e05e" />
+          <stop offset="100%" stop-color="#b7791f" />
+        </linearGradient>
+
+        <!-- Brembo brake disc stainless steel -->
+        <linearGradient id="disc-steel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e2e8f0" />
+          <stop offset="50%" stop-color="#718096" />
+          <stop offset="100%" stop-color="#cbd5e1" />
+        </linearGradient>
+
+        <!-- Spark glow filter -->
+        <filter id="spark-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
       </defs>
 
-      <!-- Upright center guideline -->
-      <line :x1="originX" y1="40" :x2="originX" :y2="groundY" stroke="rgba(255,255,255,0.1)" stroke-dasharray="3 4" />
+      <!-- Upright zero-degree reference axis -->
+      <line :x1="originX" y1="40" :x2="originX" :y2="groundY" stroke="rgba(255,255,255,0.12)" stroke-dasharray="3 4" />
+      <text :x="originX + 6" y="55" fill="#718096" font-size="10" font-family="monospace">0° Upright</text>
 
-      <!-- Track ground plane -->
+      <!-- Track ground plane & asphalt -->
       <rect x="0" :y="groundY" width="600" height="60" fill="url(#asphalt-front)" />
-      <line x1="0" :y1="groundY" x2="600" :y2="groundY" stroke="#2d3748" stroke-width="2.5" />
-      <text x="24" :y="groundY + 22" fill="#718096" font-size="11">Track Apex Surface</text>
+      <line x1="0" :y1="groundY" x2="600" :y2="groundY" stroke="#2d3748" stroke-width="2" />
 
-      <!-- Leaned Front Assembly (Motorcycle Frame, Forks, Wheel, Headlights) -->
+      <!-- Inside Apex Kerb (on the right side when leaning right) -->
+      <rect x="420" :y="groundY - 4" width="180" height="18" fill="url(#kerb-rumble)" stroke="#a0aec0" stroke-width="1" />
+      <text x="440" :y="groundY + 32" fill="#a0aec0" font-size="10" font-family="monospace">Apex Kerb Rumble</text>
+
+      <!-- Ground Contact Patch lateral migration indicator -->
+      <g :transform="`translate(${cpX}, ${groundY})`">
+        <!-- Glowing tire footprint oval -->
+        <ellipse cx="0" cy="0" rx="14" ry="4" fill="rgba(79, 209, 197, 0.3)" stroke="#4fd1c5" stroke-width="1.5" />
+        <!-- Migration arrow from centerline -->
+        <line :x1="originX - cpX" y1="12" x2="0" y2="12" stroke="#4fd1c5" stroke-width="1.5" stroke-dasharray="2 2" />
+        <text :x="(originX - cpX) / 2" y="24" fill="#4fd1c5" font-size="9" text-anchor="middle" font-family="monospace">
+          Δy = {{ telemetry.contactPatchOffsetMm.toFixed(0) }}mm
+        </text>
+      </g>
+
+      <!-- Lean Angle Degree Protractor Gauge Arc -->
+      <g :transform="`translate(${originX}, ${groundY})`">
+        <!-- Guide circle arc -->
+        <path d="M 0 -240 A 240 240 0 0 1 170 -170" fill="none" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3 3" />
+        <!-- Active lean angle radius line -->
+        <line
+          x1="0"
+          y1="0"
+          :x2="240 * Math.sin(bikeLeanRad)"
+          :y2="-240 * Math.cos(bikeLeanRad)"
+          stroke="rgba(255, 107, 61, 0.6)"
+          stroke-width="1.5"
+          stroke-dasharray="4 2"
+        />
+        <!-- Arc wedge -->
+        <text
+          :x="140 * Math.sin(bikeLeanRad / 2)"
+          :y="-140 * Math.cos(bikeLeanRad / 2)"
+          fill="#ff6b3d"
+          font-size="11"
+          font-weight="700"
+          font-family="monospace"
+        >
+          {{ bikeLeanDeg.toFixed(1) }}°
+        </text>
+      </g>
+
+      <!-- Mechanical Lean Clearance Wedge Indicator -->
+      <g :transform="`translate(${cpX}, ${groundY})`">
+        <line
+          x1="0"
+          y1="0"
+          :x2="260 * Math.sin(maxMechRad)"
+          :y2="-260 * Math.cos(maxMechRad)"
+          stroke="rgba(255, 92, 108, 0.45)"
+          stroke-width="1.5"
+          stroke-dasharray="3 3"
+        />
+        <text
+          :x="260 * Math.sin(maxMechRad) + 6"
+          :y="-260 * Math.cos(maxMechRad)"
+          fill="#ff5c6c"
+          font-size="9"
+          font-family="monospace"
+        >
+          Mech Limit {{ maxMechLeanDeg }}°
+        </text>
+      </g>
+
+      <!-- LEANED MOTORCYCLE FRONT ASSEMBLY (Rotates around shifted contact patch) -->
       <g :transform="`translate(${cpX}, ${groundY}) rotate(${telemetry.toroidalBikeLeanDeg})`">
-        <!-- Front tire crown contact -->
-        <ellipse cx="0" :cy="-frontRtPx" :rx="frontRtPx * 0.85" :ry="frontRtPx" fill="#171e28" stroke="#334155" stroke-width="2.5" />
-        <circle cx="0" :cy="-frontRtPx * 2" r="18" fill="none" stroke="#ff6b3d" stroke-width="2" />
+        <!-- Front Tire Crown Contact Profile (120/70-17 radial tire) -->
+        <ellipse cx="0" :cy="-frontRtPx" :rx="frontRtPx * 0.88" :ry="frontRtPx" fill="#121720" stroke="#2d3748" stroke-width="3" />
+        <ellipse cx="0" :cy="-frontRtPx" :rx="frontRtPx * 0.72" :ry="frontRtPx * 0.85" fill="#18202c" />
 
-        <!-- Dual Inverted Fork Stanchions -->
-        <line x1="-16" y1="-70" x2="-16" y2="-230" stroke="#cbd5e1" stroke-width="7" stroke-linecap="round" />
-        <line x1="16" y1="-70" x2="16" y2="-230" stroke="#cbd5e1" stroke-width="7" stroke-linecap="round" />
-        <line x1="-16" y1="-140" x2="-16" y2="-230" stroke="#ecc94b" stroke-width="9" stroke-linecap="round" />
-        <line x1="16" y1="-140" x2="16" y2="-230" stroke="#ecc94b" stroke-width="9" stroke-linecap="round" />
+        <!-- Front Wheel Rim & Spokes (17-inch lightweight forged alloy) -->
+        <circle cx="0" cy="-80" r="42" fill="#0d1117" stroke="#4a5568" stroke-width="3.5" />
+        <circle cx="0" cy="-80" r="14" fill="#2d3748" stroke="#cbd5e1" stroke-width="2" />
+        <!-- Dual 330mm Drilled Floating Brake Rotors -->
+        <circle cx="-16" cy="-80" r="32" fill="none" stroke="url(#disc-steel)" stroke-width="4" stroke-dasharray="6 3" />
+        <circle cx="16" cy="-80" r="32" fill="none" stroke="url(#disc-steel)" stroke-width="4" stroke-dasharray="6 3" />
 
-        <!-- Front Fender -->
-        <path d="M -22 -100 Q 0 -115 22 -100" fill="none" stroke="#ff6b3d" stroke-width="5" stroke-linecap="round" />
+        <!-- Brembo Stylema Radial Calipers (Red anodized) -->
+        <rect x="-24" y="-94" width="8" height="28" rx="2" fill="#e53e3e" stroke="#fff" stroke-width="0.8" />
+        <rect x="16" y="-94" width="8" height="28" rx="2" fill="#e53e3e" stroke="#fff" stroke-width="0.8" />
 
-        <!-- Lower Triple Clamp -->
-        <rect x="-26" y="-235" width="52" height="10" rx="3" fill="#334155" />
+        <!-- Inverted Öhlins Front Fork Stanchions -->
+        <!-- Lower Chrome Sliders -->
+        <line x1="-18" y1="-70" x2="-18" y2="-170" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+        <line x1="18" y1="-70" x2="18" y2="-170" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round" />
+        <!-- Upper Kashima Gold Outer Tubes -->
+        <line x1="-18" y1="-150" x2="-18" y2="-245" stroke="url(#fork-gold)" stroke-width="11" stroke-linecap="round" />
+        <line x1="18" y1="-150" x2="18" y2="-245" stroke="url(#fork-gold)" stroke-width="11" stroke-linecap="round" />
 
-        <!-- Front Aerodynamic Nose Cowling -->
+        <!-- Front Carbon Fiber Fender -->
+        <path d="M -26 -108 Q 0 -130 26 -108" fill="none" stroke="url(#carbon-fiber)" stroke-width="8" stroke-linecap="round" />
+        <path d="M -26 -108 Q 0 -130 26 -108" fill="none" stroke="#ff6b3d" stroke-width="1.5" />
+
+        <!-- Billet Aluminum Lower Triple Tree Clamp -->
+        <rect x="-28" y="-242" width="56" height="12" rx="3" fill="#2d3748" stroke="#4a5568" stroke-width="1" />
+
+        <!-- MotoGP Downforce Aerodynamic Winglets (protruding left & right) -->
+        <!-- Left Winglet -->
+        <path d="M -46 -245 L -85 -235 L -80 -225 L -42 -232 Z" fill="url(#carbon-fiber)" stroke="#ff6b3d" stroke-width="1.5" />
+        <!-- Right Winglet (inside of corner, generates downforce) -->
+        <path d="M 46 -245 L 85 -235 L 80 -225 L 42 -232 Z" fill="url(#carbon-fiber)" stroke="#ff6b3d" stroke-width="1.5" />
+
+        <!-- Front Fairing Nose Cowling (Aggressive Superbike Styling) -->
         <path
-          d="M 0 -310 L -46 -260 L -62 -220 L -30 -195 L 0 -210 L 30 -195 L 62 -220 L 46 -260 Z"
-          fill="#1a202c"
+          d="M 0 -325 L -52 -270 L -68 -225 L -34 -195 L 0 -212 L 34 -195 L 68 -225 L 52 -270 Z"
+          fill="#171c26"
           stroke="#ff6b3d"
           stroke-width="2.5"
         />
+        <!-- Fairing accent side vents -->
+        <polygon points="-48,-245 -58,-225 -38,-215" fill="#0b0e14" stroke="#4a5568" stroke-width="1" />
+        <polygon points="48,-245 58,-225 38,-215" fill="#0b0e14" stroke="#4a5568" stroke-width="1" />
 
-        <!-- Clear Racing Windshield -->
-        <path d="M 0 -355 L -26 -305 L 0 -290 L 26 -305 Z" fill="url(#windshield-grad)" stroke="#4fd1c5" stroke-width="1.5" />
+        <!-- Clear Racing Double-Bubble Windscreen -->
+        <path d="M 0 -370 L -28 -315 L 0 -300 L 28 -315 Z" fill="url(#windshield-grad)" stroke="#4fd1c5" stroke-width="1.8" />
+        <path d="M -12 -335 L 0 -360 L 12 -335" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1" />
 
-        <!-- Aggressive Twin LED Headlights (glowing) -->
-        <path d="M -40 -245 L -16 -240 L -32 -252 Z" fill="#63b3ed" filter="url(#headlight-glow)" />
-        <path d="M 40 -245 L 16 -240 L 32 -252 Z" fill="#63b3ed" filter="url(#headlight-glow)" />
-        <circle cx="-28" cy="-244" r="3" fill="#ffffff" />
-        <circle cx="28" cy="-244" r="3" fill="#ffffff" />
+        <!-- Central Ram-Air Air Intake Duct -->
+        <polygon points="-12,-232 12,-232 8,-248 -8,-248" fill="#090d14" stroke="#718096" stroke-width="1.2" />
 
-        <!-- Central Ram-Air Intake -->
-        <polygon points="-10,-230 10,-230 6,-242 -6,-242" fill="#0b0f17" stroke="#4a5568" stroke-width="1" />
+        <!-- High-Intensity LED Projector Headlights with DRL Eyebrows -->
+        <!-- Left Light -->
+        <path d="M -44 -250 L -18 -246 L -34 -258 Z" fill="#63b3ed" filter="url(#headlight-glow)" />
+        <circle cx="-32" cy="-250" r="4" fill="#ffffff" />
+        <!-- Right Light -->
+        <path d="M 44 -250 L 18 -246 L 34 -258 Z" fill="#63b3ed" filter="url(#headlight-glow)" />
+        <circle cx="32" cy="-250" r="4" fill="#ffffff" />
 
-        <!-- Clip-on Handlebars with Bar-End Guards -->
-        <line x1="-70" y1="-265" x2="-22" y2="-250" stroke="#718096" stroke-width="5" stroke-linecap="round" />
-        <line x1="70" y1="-265" x2="22" y2="-250" stroke="#718096" stroke-width="5" stroke-linecap="round" />
-        <circle cx="-70" cy="-265" r="5" fill="#e2e8f0" />
-        <circle cx="70" cy="-265" r="5" fill="#e2e8f0" />
-        <!-- Brake lever guard (right side) -->
-        <path d="M 68 -265 L 85 -260 L 82 -250" fill="none" stroke="#ff6b3d" stroke-width="2.5" />
+        <!-- Clip-on Racing Handlebars with Billet Lever Guards -->
+        <line x1="-74" y1="-272" x2="-24" y2="-258" stroke="#718096" stroke-width="6" stroke-linecap="round" />
+        <line x1="74" y1="-272" x2="24" y2="-258" stroke="#718096" stroke-width="6" stroke-linecap="round" />
+        <circle cx="-74" cy="-272" r="5" fill="#e2e8f0" />
+        <circle cx="74" cy="-272" r="5" fill="#e2e8f0" />
+        <!-- Right Lever Guard (Brake side - MotoGP regulation) -->
+        <path d="M 72 -272 L 92 -268 L 88 -254" fill="none" stroke="#ff6b3d" stroke-width="2.5" stroke-linecap="round" />
 
-        <!-- Footpegs -->
-        <line x1="-35" y1="-95" x2="-58" y2="-95" stroke="#a0aec0" stroke-width="4" stroke-linecap="round" />
-        <line x1="35" y1="-95" x2="58" y2="-95" :stroke="isScraping ? '#ff5c6c' : '#a0aec0'" stroke-width="4" stroke-linecap="round" />
+        <!-- Footpegs & Exhaust Can Clearance Check -->
+        <line x1="-38" y1="-95" x2="-62" y2="-95" stroke="#a0aec0" stroke-width="5" stroke-linecap="round" />
+        <line x1="38" y1="-95" x2="62" y2="-95" :stroke="isScraping ? '#ff5c6c' : '#a0aec0'" stroke-width="5" stroke-linecap="round" />
+
+        <!-- Dynamic Scraping Sparks if Footpeg / Fairing touches track -->
+        <g v-if="isScraping" filter="url(#spark-glow)">
+          <circle cx="64" cy="-90" r="3" fill="#ffcf5c" />
+          <circle cx="72" cy="-82" r="2.5" fill="#ff6b3d" />
+          <circle cx="80" cy="-76" r="2" fill="#ffb347" />
+          <line x1="62" y1="-95" x2="85" y2="-75" stroke="#ffcf5c" stroke-width="1.8" />
+          <line x1="62" y1="-95" x2="78" y2="-88" stroke="#ff5c6c" stroke-width="1.2" />
+        </g>
       </g>
 
-      <!-- Rider Front Anatomy (Helmet, Torso hanging off, Knee Puck) -->
-      <!-- Rider shifts to the inside of the turn (to the right when leaning right) -->
+      <!-- RIDER ANATOMY & KNEE-DOWN DRAGGING ON TRACK -->
       <g v-if="riderHangOffCm > 0">
-        <!-- Helmet tucked behind screen -->
-        <circle
-          :cx="cpX + 32 * Math.sin(bikeLeanRad) + (kneeHangOffPx * 0.45)"
-          :cy="groundY - 330 * Math.cos(bikeLeanRad)"
-          r="16"
-          fill="#3182ce"
-          stroke="#63b3ed"
+        <!-- Helmet tucked in cornering roll (aerodynamic spoiler) -->
+        <g :transform="`translate(${cpX + 32 * Math.sin(bikeLeanRad) + (kneeHangOffPx * 0.45)}, ${groundY - 330 * Math.cos(bikeLeanRad)})`">
+          <!-- Helmet Shell -->
+          <ellipse cx="0" cy="0" rx="18" ry="16" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2.5" />
+          <!-- Aerodynamic Rear Spoiler -->
+          <polygon points="-12,-8 12,-8 16,-16 -16,-16" fill="#172554" stroke="#60a5fa" stroke-width="1" />
+          <!-- Iridium Tinted Visor with Glare -->
+          <path d="M -6 2 Q 8 6 16 0 Q 14 -8 4 -6 Z" fill="url(#iridium-visor)" stroke="#ffffff" stroke-width="0.8" />
+        </g>
+
+        <!-- Leaning Upper Torso & Dainese Leather Suit -->
+        <path
+          :d="`M ${cpX + 12} ${groundY - 265 * Math.cos(bikeLeanRad)}
+             Q ${kneeX - 25} ${groundY - 215} ${kneeX} ${kneeY - 45}
+             L ${kneeX + 28} ${kneeY - 25}
+             Q ${kneeX + 12} ${groundY - 255} ${cpX + 50} ${groundY - 295 * Math.cos(bikeLeanRad)} Z`"
+          fill="rgba(30, 58, 138, 0.55)"
+          stroke="#3b82f6"
           stroke-width="2.5"
         />
-        <!-- Visor -->
-        <path
-          :d="`M ${cpX + 32 * Math.sin(bikeLeanRad) + (kneeHangOffPx * 0.45) - 4} ${groundY - 330 * Math.cos(bikeLeanRad) - 2}
-             q 14 0 16 6`"
-          fill="none"
-          stroke="#1a202c"
-          stroke-width="4"
-          stroke-linecap="round"
+
+        <!-- Shoulder Titanium Armor Slider -->
+        <ellipse
+          :cx="cpX + 28 * Math.sin(bikeLeanRad) + (kneeHangOffPx * 0.6)"
+          :cy="groundY - 275 * Math.cos(bikeLeanRad)"
+          rx="10"
+          ry="7"
+          fill="#cbd5e1"
+          stroke="#94a3b8"
+          stroke-width="1.5"
         />
 
-        <!-- Leaning Upper Torso & Leathers -->
-        <path
-          :d="`M ${cpX + 10} ${groundY - 260 * Math.cos(bikeLeanRad)}
-             Q ${kneeX - 20} ${groundY - 210} ${kneeX} ${kneeY - 40}
-             L ${kneeX + 25} ${kneeY - 25}
-             Q ${kneeX + 10} ${groundY - 250} ${cpX + 45} ${groundY - 290 * Math.cos(bikeLeanRad)} Z`"
-          fill="rgba(49, 130, 206, 0.45)"
-          stroke="#63b3ed"
-          stroke-width="2"
-        />
-
-        <!-- Knee Puck & Leg Slider (Touching track surface) -->
+        <!-- Knee Slider Cup & Replaceable Puck -->
         <g :transform="`translate(${kneeX}, ${kneeY})`">
-          <!-- Knee armor cup -->
-          <ellipse cx="0" cy="-6" rx="14" ry="12" fill="#2b6cb0" stroke="#90cdf4" stroke-width="2" />
-          <!-- Replaceable Knee Slider Puck -->
+          <!-- Knee Armor Cap -->
+          <ellipse cx="0" cy="-6" rx="15" ry="12" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2" />
+          <!-- Puck (Turns glowing yellow/orange when touching track) -->
           <rect
             x="-8"
             y="-2"
-            width="18"
-            height="10"
+            width="20"
+            height="11"
             rx="3"
-            :fill="isKneeDown ? '#ffcf5c' : '#ffffff'"
-            :stroke="isKneeDown ? '#ff6b3d' : '#cbd5e1'"
+            :fill="isKneeDown ? '#f6ad55' : '#ffffff'"
+            :stroke="isKneeDown ? '#dd6b20' : '#cbd5e1'"
             stroke-width="2"
           />
-          <!-- Spark particles if knee down -->
-          <g v-if="isKneeDown">
-            <circle cx="12" cy="4" r="2" fill="#ffb347" />
-            <circle cx="18" cy="8" r="1.5" fill="#ff6b3d" />
-            <circle cx="22" cy="12" r="1" fill="#ffcf5c" />
+
+          <!-- Knee Down Sparks flying on track -->
+          <g v-if="isKneeDown" filter="url(#spark-glow)">
+            <circle cx="16" cy="5" r="2.8" fill="#ffcf5c" />
+            <circle cx="24" cy="9" r="2.2" fill="#ff6b3d" />
+            <circle cx="32" cy="14" r="1.5" fill="#fbd38d" />
+            <line x1="10" y1="2" x2="28" y2="10" stroke="#ffcf5c" stroke-width="1.6" />
           </g>
-          <text x="22" y="2" fill="#90cdf4" font-size="10" font-weight="600">
-            Knee Slider
+
+          <text x="24" y="0" fill="#90cdf4" font-size="10" font-weight="700" font-family="monospace">
+            {{ isKneeDown ? 'PUCK DRAGGING' : 'KNEE SLIDER' }}
           </text>
         </g>
 
-        <!-- Knee ground clearance dimension line -->
+        <!-- Knee Ground Clearance Dimension Callout Line -->
         <line :x1="kneeX" :y1="kneeY" :x2="kneeX" :y2="groundY" stroke="#63b3ed" stroke-width="1.5" stroke-dasharray="2 2" />
       </g>
     </svg>
@@ -234,6 +393,12 @@ const isScraping = computed(() => props.telemetry.isScrapingHardParts);
 .badge.warn { background: rgba(255, 207, 92, 0.15); color: var(--warn); border: 1px solid rgba(255, 207, 92, 0.4); }
 .badge.bad { background: rgba(255, 92, 108, 0.2); color: var(--bad); border: 1px solid rgba(255, 92, 108, 0.5); }
 
+.header-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
 .knee-badge {
   display: flex;
   align-items: center;
@@ -243,14 +408,15 @@ const isScraping = computed(() => props.telemetry.isScrapingHardParts);
 .knee-badge .k { color: var(--muted); }
 .knee-badge .v { font-weight: 700; font-variant-numeric: tabular-nums; }
 .knee-badge .v.ok { color: var(--ok); }
+.knee-badge .v.warn { color: var(--warn); }
 .knee-badge .v.accent { color: var(--accent-2); }
 
 .front-canvas {
   width: 100%;
   height: auto;
-  max-height: 400px;
-  background: #090d14;
+  max-height: 420px;
+  background: #080c14;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 </style>
