@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit",
+    "screenshots": "vite build && node scripts/screenshots.mjs"
   },
   "dependencies": {
     "@sqlite.org/sqlite-wasm": "^3.46.1-build4",
@@ -16,6 +17,7 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/js-yaml": "^4.0.9",
     "@vitejs/plugin-vue": "^5.1.0",
     "typescript": "^5.5.0",

@@ -8,6 +8,22 @@ Offline-first, serverless PWA for motorcycle grip and lean-limit calculations
 - **Cross-origin isolation:** custom service worker (`src/sw.ts`) adds COOP/COEP headers (GitHub Pages can't)
 - **Data pipeline:** `scraper/scraper.py` (aiohttp + BeautifulSoup + OpenCV CoG), run weekly by `.github/workflows/scraper.yml`
 
+**Live:** https://franekjemiolo.github.io/kammforce/
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/desktop.png" alt="KammForce desktop: system status and motorcycle database" width="720" />
+  <img src="docs/screenshots/mobile.png" alt="KammForce on mobile" width="220" />
+</p>
+
+Regenerate them after UI changes (builds the app, serves it, captures with Playwright):
+
+```bash
+npx playwright install chromium   # first time only
+npm run screenshots
+```
+
 ## Development
 
 ```bash
