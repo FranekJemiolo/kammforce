@@ -1,0 +1,27 @@
+brand: BMW
+models:
+- id: bmw_s1000rr_m_2024
+  name: S 1000 RR (M Package)
+  year: 2024
+  wheelbase_mm: 1457
+  rake_deg: 23.6
+  trail_mm: 100
+  cog_height_mm: 618
+  mass_kg: 193
+  max_mech_lean_deg: 57
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_55_17, 190_55_17]
+  cog_source: image
+
+- id: bmw_m1000rr_2024
+  name: M 1000 RR
+  year: 2024
+  wheelbase_mm: 1457
+  rake_deg: 23.6
+  trail_mm: 101
+  cog_height_mm: 616
+  mass_kg: 192
+  max_mech_lean_deg: 59
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_55_17]
+  cog_source: image

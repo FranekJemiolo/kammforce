@@ -33,11 +33,9 @@ try {
     const ctx = await browser.newContext({ viewport: s.viewport, deviceScaleFactor: s.scale });
     const page = await ctx.newPage();
     await page.goto(URL);
-    // Wait until the DB is open on OPFS and YAML hydration finished.
-    await page.waitForFunction(
-      () => document.querySelector('#stat-hydration')?.textContent?.includes('Up to date'),
-      null, { timeout: 30000 },
-    );
+    // Wait until the live physics visualizers and calculation are rendered.
+    await page.waitForSelector('.visualizers-row', { timeout: 30000 });
+    await page.waitForSelector('.vis-canvas', { timeout: 30000 });
     await page.waitForTimeout(700); // let entry animations settle
     await page.screenshot({ path: `${OUT}/${s.name}.png`, fullPage: true });
     console.log(`saved ${OUT}/${s.name}.png`);

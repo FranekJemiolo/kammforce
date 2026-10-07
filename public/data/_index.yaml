@@ -1,4 +1,22 @@
 brands:
+- brand: BMW
+  file: motorcycles/bmw.yaml
+  models:
+  - {id: bmw_s1000rr_m_2024, name: S 1000 RR (M Package), year: 2024}
+  - {id: bmw_m1000rr_2024, name: M 1000 RR, year: 2024}
+- brand: Ducati
+  file: motorcycles/ducati.yaml
+  models:
+  - {id: duc_panigale_v4s_2024, name: Panigale V4 S, year: 2024}
+  - {id: duc_panigale_v2_2024, name: Panigale V2, year: 2024}
+- brand: Honda
+  file: motorcycles/honda.yaml
+  models:
+  - {id: hon_cbr1000rr_r_sp_2024, name: CBR1000RR-R Fireblade SP, year: 2024}
+- brand: Kawasaki
+  file: motorcycles/kawasaki.yaml
+  models:
+  - {id: kaw_ninja_zx10r_2024, name: Ninja ZX-10R, year: 2024}
 - brand: Yamaha
   file: motorcycles/yamaha.yaml
   models:

@@ -1,0 +1,14 @@
+brand: Kawasaki
+models:
+- id: kaw_ninja_zx10r_2024
+  name: Ninja ZX-10R
+  year: 2024
+  wheelbase_mm: 1450
+  rake_deg: 25.0
+  trail_mm: 105
+  cog_height_mm: 614
+  mass_kg: 207
+  max_mech_lean_deg: 56
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [190_55_17]
+  cog_source: heuristic

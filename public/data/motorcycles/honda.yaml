@@ -1,0 +1,14 @@
+brand: Honda
+models:
+- id: hon_cbr1000rr_r_sp_2024
+  name: CBR1000RR-R Fireblade SP
+  year: 2024
+  wheelbase_mm: 1455
+  rake_deg: 24.0
+  trail_mm: 102
+  cog_height_mm: 612
+  mass_kg: 201
+  max_mech_lean_deg: 57
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_55_17, 190_55_17]
+  cog_source: heuristic
