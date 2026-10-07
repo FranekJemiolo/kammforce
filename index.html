@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="KammForce: offline-first motorcycle grip and lean-limit calculator using toroidal tire physics." />
+    <meta name="theme-color" content="#0b0f17" />
+    <link rel="icon" href="%BASE_URL%icon.svg" type="image/svg+xml" />
+    <title>KammForce – Motorcycle Grip &amp; Lean Limits</title>
+
+    <!-- 1. MUST be first: registers the SW that adds COOP/COEP headers, then reloads once -->
+    <script src="%BASE_URL%coi-register.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- 2. Main application -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

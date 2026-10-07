@@ -1,0 +1,25 @@
+# Scrape targets for scraper.py.
+#
+# !! The URLs below are PLACEHOLDERS. Replace them with real public spec pages
+# !! you are allowed to scrape (check each site's ToS and robots.txt; the scraper
+# !! also enforces robots.txt automatically).
+#
+# Selector defaults can be overridden globally (`defaults:`) or per target.
+
+defaults:
+  table_selector: "table.specs-table"
+  image_selector: "img.main-bike-photo"
+  max_concurrency: 5
+  request_delay_s: 1.0
+
+targets:
+  - make: Yamaha
+    name: YZF-R1
+    year: 2024
+    url: https://example.com/specs/yamaha/r1/2024
+    engine_type: inline_4   # optional; auto-detected from the spec table if omitted
+
+  - make: Yamaha
+    name: MT-09
+    year: 2023
+    url: https://example.com/specs/yamaha/mt09/2023

@@ -1,0 +1,5 @@
+brands:
+- brand: Yamaha
+  file: motorcycles/yamaha.yaml
+  models:
+  - {id: yam_yzf_r1_2024, name: YZF-R1, year: 2024}

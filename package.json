@@ -1,0 +1,28 @@
+{
+  "name": "kammforce",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@sqlite.org/sqlite-wasm": "^3.46.1-build4",
+    "js-yaml": "^4.1.0",
+    "localforage": "^1.10.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@vitejs/plugin-vue": "^5.1.0",
+    "typescript": "^5.5.0",
+    "vite": "^5.4.0",
+    "vite-plugin-pwa": "^0.20.5",
+    "vue-tsc": "^2.1.0",
+    "workbox-core": "^7.1.0",
+    "workbox-precaching": "^7.1.0"
+  }
+}

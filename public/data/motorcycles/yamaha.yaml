@@ -1,0 +1,13 @@
+brand: Yamaha
+models:
+- id: yam_yzf_r1_2024
+  name: YZF-R1
+  year: 2024
+  wheelbase_mm: 1405
+  rake_deg: 24.0
+  trail_mm: 102
+  cog_height_mm: 610
+  mass_kg: 201
+  max_mech_lean_deg: 56
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [190_55_17, 200_55_17]

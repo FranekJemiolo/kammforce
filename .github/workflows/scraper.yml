@@ -1,0 +1,58 @@
+name: Scheduled Database Scraper
+
+on:
+  schedule:
+    # 02:00 UTC every Sunday
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+
+# Needed so GITHUB_TOKEN can push a branch and open a PR.
+# Also enable: Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests".
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: scraper
+  cancel-in-progress: false
+
+jobs:
+  scrape-and-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      # opencv-python-headless bundles what it needs; no libGL / apt packages required
+      # (libgl1-mesa-glx no longer exists on ubuntu-24.04 runners).
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      - name: Run scraper pipeline
+        run: python scraper/scraper.py --targets scraper/targets.yaml --output public/data
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: public/data/**
+          commit-message: "data: auto-update motorcycle yaml database"
+          branch: auto-update/motorcycle-db
+          delete-branch: true
+          title: "🤖 Database Update: New Motorcycles Scraped"
+          body: |
+            Automated database update from the scheduled scraper workflow.
+
+            Please review the YAML diff (parsed numbers, `cog_source: image|heuristic`)
+            before merging into `main`.
+          labels: automated pr, data-update
