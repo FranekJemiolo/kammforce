@@ -1,0 +1,16 @@
+brand: Derbi
+models:
+- id: der_gpr_50_racing_2020
+  name: GPR 50 Racing
+  year: 2020
+  wheelbase_mm: 1315
+  rake_deg: 24.5
+  trail_mm: 88
+  cog_height_mm: 525
+  mass_kg: 90
+  max_mech_lean_deg: 53
+  oem_front_tire: 100_80_17
+  oem_rear_tire: 130_70_17
+  compatible_front_tires: [90_80_17, 100_80_17]
+  compatible_rear_tires: [130_70_17, 140_70_17]
+  cog_source: heuristic

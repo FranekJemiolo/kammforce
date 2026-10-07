@@ -1,33 +1,48 @@
 brand: Ducati
 models:
-- id: duc_panigale_v4_r_2024
-  name: Panigale V4 R
+- id: duc_hypermotard_698_mono_2024
+  name: Hypermotard 698 Mono
   year: 2024
-  wheelbase_mm: 1471
-  rake_deg: 24.5
-  trail_mm: 100
-  cog_height_mm: 618
-  mass_kg: 193
-  max_mech_lean_deg: 60
+  wheelbase_mm: 1443
+  rake_deg: 26.1
+  trail_mm: 108
+  cog_height_mm: 640
+  mass_kg: 151
+  max_mech_lean_deg: 57
   oem_front_tire: 120_70_17
-  oem_rear_tire: 200_60_17
+  oem_rear_tire: 160_60_17
   compatible_front_tires: [120_70_17]
-  compatible_rear_tires: [200_60_17, 200_55_17]
+  compatible_rear_tires: [160_60_17]
   cog_source: image
 
-- id: duc_panigale_v4s_2024
-  name: Panigale V4 S
+- id: duc_desertx_2024
+  name: DesertX
   year: 2024
-  wheelbase_mm: 1469
-  rake_deg: 24.5
-  trail_mm: 100
+  wheelbase_mm: 1608
+  rake_deg: 27.6
+  trail_mm: 122
+  cog_height_mm: 710
+  mass_kg: 223
+  max_mech_lean_deg: 46
+  oem_front_tire: 90_90_21
+  oem_rear_tire: 150_70_18
+  compatible_front_tires: [90_90_21]
+  compatible_rear_tires: [150_70_18]
+  cog_source: heuristic
+
+- id: duc_monster_sp_2024
+  name: Monster SP
+  year: 2024
+  wheelbase_mm: 1472
+  rake_deg: 24.0
+  trail_mm: 93
   cog_height_mm: 615
-  mass_kg: 195
-  max_mech_lean_deg: 58
+  mass_kg: 186
+  max_mech_lean_deg: 53
   oem_front_tire: 120_70_17
-  oem_rear_tire: 200_60_17
+  oem_rear_tire: 180_55_17
   compatible_front_tires: [120_70_17]
-  compatible_rear_tires: [200_60_17, 200_55_17]
+  compatible_rear_tires: [180_55_17]
   cog_source: image
 
 - id: duc_panigale_v2_2024
@@ -58,4 +73,49 @@ models:
   oem_rear_tire: 200_60_17
   compatible_front_tires: [120_70_17]
   compatible_rear_tires: [200_60_17, 200_55_17]
+  cog_source: heuristic
+
+- id: duc_panigale_v4s_2024
+  name: Panigale V4 S
+  year: 2024
+  wheelbase_mm: 1469
+  rake_deg: 24.5
+  trail_mm: 100
+  cog_height_mm: 615
+  mass_kg: 195
+  max_mech_lean_deg: 58
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 200_60_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_60_17, 200_55_17]
   cog_source: image
+
+- id: duc_panigale_v4_r_2024
+  name: Panigale V4 R
+  year: 2024
+  wheelbase_mm: 1471
+  rake_deg: 24.5
+  trail_mm: 100
+  cog_height_mm: 618
+  mass_kg: 193
+  max_mech_lean_deg: 60
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 200_60_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_60_17, 200_55_17]
+  cog_source: image
+
+- id: duc_multistrada_v4s_2024
+  name: Multistrada V4 S
+  year: 2024
+  wheelbase_mm: 1567
+  rake_deg: 24.5
+  trail_mm: 102
+  cog_height_mm: 670
+  mass_kg: 243
+  max_mech_lean_deg: 50
+  oem_front_tire: 120_70_19
+  oem_rear_tire: 170_60_17
+  compatible_front_tires: [120_70_19]
+  compatible_rear_tires: [170_60_17]
+  cog_source: heuristic

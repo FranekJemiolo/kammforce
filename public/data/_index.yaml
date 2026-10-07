@@ -2,56 +2,117 @@ brands:
 - brand: Aprilia
   file: motorcycles/aprilia.yaml
   models:
+  - {id: apr_rs_50_2020, name: RS 50, year: 2020}
+  - {id: apr_rs_125_2024, name: RS 125, year: 2024}
+  - {id: apr_rs_457_2024, name: RS 457, year: 2024}
+  - {id: apr_rs_660_2024, name: RS 660 Extrema, year: 2024}
+  - {id: apr_tuono_660_2024, name: Tuono 660 Factory, year: 2024}
   - {id: apr_rsv4_factory_1100_2024, name: RSV4 Factory 1100, year: 2024}
   - {id: apr_tuono_v4_factory_2024, name: Tuono V4 Factory, year: 2024}
-  - {id: apr_rs_660_2024, name: RS 660 Extrema, year: 2024}
+
 - brand: BMW
   file: motorcycles/bmw.yaml
   models:
-  - {id: bmw_m1000rr_2024, name: M 1000 RR, year: 2024}
-  - {id: bmw_s1000rr_m_2024, name: S 1000 RR (M Package), year: 2024}
+  - {id: bmw_g310r_2024, name: G 310 R, year: 2024}
+  - {id: bmw_f900r_2024, name: F 900 R, year: 2024}
+  - {id: bmw_s1000r_2024, name: S 1000 R, year: 2024}
   - {id: bmw_m1000r_2024, name: M 1000 R, year: 2024}
+  - {id: bmw_s1000rr_m_2024, name: S 1000 RR (M Package), year: 2024}
+  - {id: bmw_m1000rr_2024, name: M 1000 RR, year: 2024}
+  - {id: bmw_r1300gs_2024, name: R 1300 GS, year: 2024}
+
+- brand: Derbi
+  file: motorcycles/derbi.yaml
+  models:
+  - {id: der_gpr_50_racing_2020, name: GPR 50 Racing, year: 2020}
+
 - brand: Ducati
   file: motorcycles/ducati.yaml
   models:
-  - {id: duc_panigale_v4_r_2024, name: Panigale V4 R, year: 2024}
-  - {id: duc_panigale_v4s_2024, name: Panigale V4 S, year: 2024}
+  - {id: duc_hypermotard_698_mono_2024, name: Hypermotard 698 Mono, year: 2024}
+  - {id: duc_desertx_2024, name: DesertX, year: 2024}
+  - {id: duc_monster_sp_2024, name: Monster SP, year: 2024}
   - {id: duc_panigale_v2_2024, name: Panigale V2, year: 2024}
   - {id: duc_streetfighter_v4_sp2_2024, name: Streetfighter V4 SP2, year: 2024}
+  - {id: duc_panigale_v4s_2024, name: Panigale V4 S, year: 2024}
+  - {id: duc_panigale_v4_r_2024, name: Panigale V4 R, year: 2024}
+  - {id: duc_multistrada_v4s_2024, name: Multistrada V4 S, year: 2024}
+
 - brand: Honda
   file: motorcycles/honda.yaml
   models:
-  - {id: hon_cbr1000rr_r_sp_2024, name: CBR1000RR-R Fireblade SP, year: 2024}
+  - {id: hon_super_cub_50_2024, name: Super Cub 50, year: 2024}
+  - {id: hon_grom_msx125_2024, name: MSX125 Grom, year: 2024}
+  - {id: hon_cbr250rr_2024, name: CBR250RR, year: 2024}
+  - {id: hon_crf300l_2024, name: CRF300L, year: 2024}
+  - {id: hon_cbr500r_2024, name: CBR500R, year: 2024}
+  - {id: hon_rebel_500_2024, name: Rebel 500 CMX500, year: 2024}
   - {id: hon_cbr600rr_2024, name: CBR600RR, year: 2024}
+  - {id: hon_cb750_hornet_2024, name: CB750 Hornet, year: 2024}
+  - {id: hon_cb1000r_2024, name: CB1000R Black Edition, year: 2024}
+  - {id: hon_cbr1000rr_r_sp_2024, name: CBR1000RR-R Fireblade SP, year: 2024}
+
 - brand: Kawasaki
   file: motorcycles/kawasaki.yaml
   models:
-  - {id: kaw_ninja_zx10rr_2024, name: Ninja ZX-10RR, year: 2024}
-  - {id: kaw_ninja_zx10r_2024, name: Ninja ZX-10R, year: 2024}
+  - {id: kaw_z125_pro_2024, name: Z125 Pro, year: 2024}
+  - {id: kaw_ninja_125_2024, name: Ninja 125, year: 2024}
+  - {id: kaw_ninja_400_2024, name: Ninja 400, year: 2024}
+  - {id: kaw_ninja_zx4rr_2024, name: Ninja ZX-4RR, year: 2024}
+  - {id: kaw_ninja_650_2024, name: Ninja 650, year: 2024}
   - {id: kaw_ninja_zx6r_2024, name: Ninja ZX-6R 636, year: 2024}
+  - {id: kaw_z900_2024, name: Z900, year: 2024}
+  - {id: kaw_ninja_zx10r_2024, name: Ninja ZX-10R, year: 2024}
+  - {id: kaw_ninja_zx10rr_2024, name: Ninja ZX-10RR, year: 2024}
+  - {id: kaw_z_h2_2024, name: Z H2, year: 2024}
+
 - brand: KTM
   file: motorcycles/ktm.yaml
   models:
-  - {id: ktm_1290_super_duke_r_evo_2024, name: 1290 Super Duke R EVO, year: 2024}
+  - {id: ktm_duke_125_2024, name: 125 Duke, year: 2024}
+  - {id: ktm_rc_125_2024, name: RC 125, year: 2024}
+  - {id: ktm_rc_390_2024, name: RC 390, year: 2024}
+  - {id: ktm_390_duke_2024, name: 390 Duke, year: 2024}
+  - {id: ktm_790_duke_2024, name: 790 Duke, year: 2024}
   - {id: ktm_890_duke_r_2023, name: 890 Duke R ("The Scalpel"), year: 2023}
+  - {id: ktm_990_duke_2024, name: 990 Duke, year: 2024}
   - {id: ktm_rc_8c_2024, name: RC 8C (Track Only), year: 2024}
+  - {id: ktm_1390_super_duke_r_evo_2024, name: 1390 Super Duke R EVO, year: 2024}
+
 - brand: Suzuki
   file: motorcycles/suzuki.yaml
   models:
-  - {id: suz_gsxr_1000r_2024, name: GSX-R1000R, year: 2024}
+  - {id: suz_gsxr_125_2024, name: GSX-R125, year: 2024}
+  - {id: suz_gsx_250r_2024, name: GSX250R, year: 2024}
+  - {id: suz_sv650_2024, name: SV650, year: 2024}
+  - {id: suz_gsx_8r_2024, name: GSX-8R, year: 2024}
   - {id: suz_gsxr_750_2024, name: GSX-R750, year: 2024}
+  - {id: suz_gsx_s1000_2024, name: GSX-S1000, year: 2024}
+  - {id: suz_gsxr_1000r_2024, name: GSX-R1000R, year: 2024}
   - {id: suz_hayabusa_gen3_2024, name: Hayabusa (GSX1300R Gen 3), year: 2024}
+
 - brand: Triumph
   file: motorcycles/triumph.yaml
   models:
+  - {id: tri_speed_400_2024, name: Speed 400, year: 2024}
+  - {id: tri_scrambler_400_x_2024, name: Scrambler 400 X, year: 2024}
+  - {id: tri_trident_660_2024, name: Trident 660, year: 2024}
+  - {id: tri_daytona_660_2024, name: Daytona 660, year: 2024}
   - {id: tri_street_triple_765_rs_2024, name: Street Triple 765 RS, year: 2024}
   - {id: tri_speed_triple_1200_rs_2024, name: Speed Triple 1200 RS, year: 2024}
-  - {id: tri_daytona_660_2024, name: Daytona 660, year: 2024}
+
 - brand: Yamaha
   file: motorcycles/yamaha.yaml
   models:
-  - {id: yam_yzf_r1m_2024, name: YZF-R1M, year: 2024}
-  - {id: yam_yzf_r1_2024, name: YZF-R1, year: 2024}
-  - {id: yam_yzf_r6_2020, name: YZF-R6 (Race Spec), year: 2020}
+  - {id: yam_aerox_50_2020, name: Aerox 50, year: 2020}
+  - {id: yam_yzf_r125_2024, name: YZF-R125, year: 2024}
+  - {id: yam_yzf_r3_2024, name: YZF-R3, year: 2024}
+  - {id: yam_mt_03_2024, name: MT-03, year: 2024}
+  - {id: yam_mt_07_2024, name: MT-07, year: 2024}
   - {id: yam_yzf_r7_2024, name: YZF-R7, year: 2024}
-  - {id: yam_mt09_sp_2024, name: MT-09 SP, year: 2024}
+  - {id: yam_tenere_700_2024, name: Ténéré 700, year: 2024}
+  - {id: yam_yzf_r6_2020, name: YZF-R6 (Race Spec), year: 2020}
+  - {id: yam_mt_09_sp_2024, name: MT-09 SP, year: 2024}
+  - {id: yam_mt_10_sp_2024, name: MT-10 SP, year: 2024}
+  - {id: yam_yzf_r1_2024, name: YZF-R1, year: 2024}
+  - {id: yam_yzf_r1m_2024, name: YZF-R1M, year: 2024}

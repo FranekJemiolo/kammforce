@@ -1,5 +1,65 @@
 brand: Triumph
 models:
+- id: tri_speed_400_2024
+  name: Speed 400
+  year: 2024
+  wheelbase_mm: 1377
+  rake_deg: 24.6
+  trail_mm: 102
+  cog_height_mm: 585
+  mass_kg: 170
+  max_mech_lean_deg: 52
+  oem_front_tire: 110_70_17
+  oem_rear_tire: 140_70_17
+  compatible_front_tires: [110_70_17]
+  compatible_rear_tires: [140_70_17]
+  cog_source: heuristic
+
+- id: tri_scrambler_400_x_2024
+  name: Scrambler 400 X
+  year: 2024
+  wheelbase_mm: 1418
+  rake_deg: 23.2
+  trail_mm: 108
+  cog_height_mm: 645
+  mass_kg: 179
+  max_mech_lean_deg: 48
+  oem_front_tire: 120_70_19
+  oem_rear_tire: 150_70_18
+  compatible_front_tires: [120_70_19]
+  compatible_rear_tires: [150_70_18]
+  cog_source: heuristic
+
+- id: tri_trident_660_2024
+  name: Trident 660
+  year: 2024
+  wheelbase_mm: 1401
+  rake_deg: 24.6
+  trail_mm: 107
+  cog_height_mm: 600
+  mass_kg: 189
+  max_mech_lean_deg: 52
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17]
+  cog_source: image
+
+- id: tri_daytona_660_2024
+  name: Daytona 660
+  year: 2024
+  wheelbase_mm: 1425
+  rake_deg: 23.8
+  trail_mm: 98
+  cog_height_mm: 595
+  mass_kg: 201
+  max_mech_lean_deg: 52
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 180_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [180_55_17]
+  cog_source: heuristic
+
 - id: tri_street_triple_765_rs_2024
   name: Street Triple 765 RS
   year: 2024
@@ -29,18 +89,3 @@ models:
   compatible_front_tires: [120_70_17]
   compatible_rear_tires: [190_55_17, 200_55_17]
   cog_source: image
-
-- id: tri_daytona_660_2024
-  name: Daytona 660
-  year: 2024
-  wheelbase_mm: 1425
-  rake_deg: 23.8
-  trail_mm: 98
-  cog_height_mm: 595
-  mass_kg: 201
-  max_mech_lean_deg: 52
-  oem_front_tire: 120_70_17
-  oem_rear_tire: 180_55_17
-  compatible_front_tires: [120_70_17]
-  compatible_rear_tires: [180_55_17]
-  cog_source: heuristic

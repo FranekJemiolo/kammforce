@@ -1,18 +1,93 @@
 brand: Honda
 models:
-- id: hon_cbr1000rr_r_sp_2024
-  name: CBR1000RR-R Fireblade SP
+- id: hon_super_cub_50_2024
+  name: Super Cub 50
+  year: 2024
+  wheelbase_mm: 1210
+  rake_deg: 26.5
+  trail_mm: 75
+  cog_height_mm: 510
+  mass_kg: 96
+  max_mech_lean_deg: 44
+  oem_front_tire: 90_80_17
+  oem_rear_tire: 110_80_17
+  compatible_front_tires: [90_80_17]
+  compatible_rear_tires: [110_80_17]
+  cog_source: heuristic
+
+- id: hon_grom_msx125_2024
+  name: MSX125 Grom
+  year: 2024
+  wheelbase_mm: 1200
+  rake_deg: 25.0
+  trail_mm: 81
+  cog_height_mm: 515
+  mass_kg: 103
+  max_mech_lean_deg: 48
+  oem_front_tire: 120_70_12
+  oem_rear_tire: 130_70_12
+  compatible_front_tires: [120_70_12]
+  compatible_rear_tires: [130_70_12]
+  cog_source: image
+
+- id: hon_cbr250rr_2024
+  name: CBR250RR
+  year: 2024
+  wheelbase_mm: 1389
+  rake_deg: 24.5
+  trail_mm: 92
+  cog_height_mm: 585
+  mass_kg: 168
+  max_mech_lean_deg: 55
+  oem_front_tire: 110_70_17
+  oem_rear_tire: 140_70_17
+  compatible_front_tires: [110_70_17]
+  compatible_rear_tires: [140_70_17, 150_60_17]
+  cog_source: image
+
+- id: hon_crf300l_2024
+  name: CRF300L
   year: 2024
   wheelbase_mm: 1455
-  rake_deg: 24.0
+  rake_deg: 27.5
+  trail_mm: 109
+  cog_height_mm: 680
+  mass_kg: 142
+  max_mech_lean_deg: 47
+  oem_front_tire: 90_90_21
+  oem_rear_tire: 150_70_18
+  compatible_front_tires: [90_90_21]
+  compatible_rear_tires: [150_70_18]
+  cog_source: heuristic
+
+- id: hon_cbr500r_2024
+  name: CBR500R
+  year: 2024
+  wheelbase_mm: 1410
+  rake_deg: 25.5
   trail_mm: 102
-  cog_height_mm: 612
-  mass_kg: 201
-  max_mech_lean_deg: 58
+  cog_height_mm: 600
+  mass_kg: 191
+  max_mech_lean_deg: 52
   oem_front_tire: 120_70_17
-  oem_rear_tire: 200_55_17
+  oem_rear_tire: 160_60_17
   compatible_front_tires: [120_70_17]
-  compatible_rear_tires: [200_55_17, 190_55_17]
+  compatible_rear_tires: [160_60_17]
+  cog_source: heuristic
+
+- id: hon_rebel_500_2024
+  name: Rebel 500 CMX500
+  year: 2024
+  wheelbase_mm: 1490
+  rake_deg: 28.0
+  trail_mm: 110
+  cog_height_mm: 510
+  mass_kg: 191
+  max_mech_lean_deg: 38
+  oem_front_tire: 130_90_16
+  oem_rear_tire: 150_80_16
+  compatible_front_tires: [130_90_16]
+  compatible_rear_tires: [150_80_16]
   cog_source: image
 
 - id: hon_cbr600rr_2024
@@ -29,3 +104,48 @@ models:
   compatible_front_tires: [120_70_17]
   compatible_rear_tires: [180_55_17, 180_60_17]
   cog_source: heuristic
+
+- id: hon_cb750_hornet_2024
+  name: CB750 Hornet
+  year: 2024
+  wheelbase_mm: 1420
+  rake_deg: 25.0
+  trail_mm: 99
+  cog_height_mm: 595
+  mass_kg: 190
+  max_mech_lean_deg: 53
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 160_60_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [160_60_17, 180_55_17]
+  cog_source: heuristic
+
+- id: hon_cb1000r_2024
+  name: CB1000R Black Edition
+  year: 2024
+  wheelbase_mm: 1455
+  rake_deg: 25.0
+  trail_mm: 100
+  cog_height_mm: 615
+  mass_kg: 213
+  max_mech_lean_deg: 53
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 190_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [190_55_17]
+  cog_source: heuristic
+
+- id: hon_cbr1000rr_r_sp_2024
+  name: CBR1000RR-R Fireblade SP
+  year: 2024
+  wheelbase_mm: 1455
+  rake_deg: 24.0
+  trail_mm: 102
+  cog_height_mm: 612
+  mass_kg: 201
+  max_mech_lean_deg: 58
+  oem_front_tire: 120_70_17
+  oem_rear_tire: 200_55_17
+  compatible_front_tires: [120_70_17]
+  compatible_rear_tires: [200_55_17, 190_55_17]
+  cog_source: image

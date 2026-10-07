@@ -1,9 +1,4 @@
-# Scrape targets for scraper.py.
-#
-# !! The URLs below are PLACEHOLDERS. Replace them with real public spec pages
-# !! you are allowed to scrape (check each site's ToS and robots.txt; the scraper
-# !! also enforces robots.txt automatically).
-#
+# Scrape targets for scraper.py covering 50cc to 1000cc+ motorcycles.
 # Selector defaults can be overridden globally (`defaults:`) or per target.
 
 defaults:
@@ -13,13 +8,266 @@ defaults:
   request_delay_s: 1.0
 
 targets:
-  - make: Yamaha
-    name: YZF-R1
-    year: 2024
-    url: https://example.com/specs/yamaha/r1/2024
-    engine_type: inline_4   # optional; auto-detected from the spec table if omitted
+  # --- 50cc Mopeds & Lightweight Racers ---
+  - make: Aprilia
+    name: RS 50
+    year: 2020
+    url: https://example.com/specs/aprilia/rs50/2020
+    engine_type: single
+
+  - make: Derbi
+    name: GPR 50 Racing
+    year: 2020
+    url: https://example.com/specs/derbi/gpr50/2020
+    engine_type: single
 
   - make: Yamaha
-    name: MT-09
-    year: 2023
-    url: https://example.com/specs/yamaha/mt09/2023
+    name: Aerox 50
+    year: 2020
+    url: https://example.com/specs/yamaha/aerox50/2020
+    engine_type: single
+
+  - make: Honda
+    name: Super Cub 50
+    year: 2024
+    url: https://example.com/specs/honda/supercub50/2024
+    engine_type: single
+
+  # --- 125cc Learners & Track Weapons ---
+  - make: Honda
+    name: MSX125 Grom
+    year: 2024
+    url: https://example.com/specs/honda/grom/2024
+    engine_type: single
+
+  - make: Yamaha
+    name: YZF-R125
+    year: 2024
+    url: https://example.com/specs/yamaha/yzfr125/2024
+    engine_type: single
+
+  - make: Aprilia
+    name: RS 125
+    year: 2024
+    url: https://example.com/specs/aprilia/rs125/2024
+    engine_type: single
+
+  - make: KTM
+    name: RC 125
+    year: 2024
+    url: https://example.com/specs/ktm/rc125/2024
+    engine_type: single
+
+  - make: KTM
+    name: Duke 125
+    year: 2024
+    url: https://example.com/specs/ktm/duke125/2024
+    engine_type: single
+
+  - make: Kawasaki
+    name: Z125 Pro
+    year: 2024
+    url: https://example.com/specs/kawasaki/z125pro/2024
+    engine_type: single
+
+  - make: Kawasaki
+    name: Ninja 125
+    year: 2024
+    url: https://example.com/specs/kawasaki/ninja125/2024
+    engine_type: single
+
+  - make: Suzuki
+    name: GSX-R125
+    year: 2024
+    url: https://example.com/specs/suzuki/gsxr125/2024
+    engine_type: single
+
+  # --- 250cc - 400cc Lightweights & Supersports ---
+  - make: Kawasaki
+    name: Ninja 400
+    year: 2024
+    url: https://example.com/specs/kawasaki/ninja400/2024
+    engine_type: parallel_twin
+
+  - make: Kawasaki
+    name: Ninja ZX-4RR
+    year: 2024
+    url: https://example.com/specs/kawasaki/zx4rr/2024
+    engine_type: inline_4
+
+  - make: Yamaha
+    name: YZF-R3
+    year: 2024
+    url: https://example.com/specs/yamaha/yzfr3/2024
+    engine_type: parallel_twin
+
+  - make: KTM
+    name: RC 390
+    year: 2024
+    url: https://example.com/specs/ktm/rc390/2024
+    engine_type: single
+
+  - make: Aprilia
+    name: RS 457
+    year: 2024
+    url: https://example.com/specs/aprilia/rs457/2024
+    engine_type: parallel_twin
+
+  - make: Honda
+    name: CBR250RR
+    year: 2024
+    url: https://example.com/specs/honda/cbr250rr/2024
+    engine_type: parallel_twin
+
+  - make: Honda
+    name: CRF300L
+    year: 2024
+    url: https://example.com/specs/honda/crf300l/2024
+    engine_type: single
+
+  - make: BMW
+    name: G 310 R
+    year: 2024
+    url: https://example.com/specs/bmw/g310r/2024
+    engine_type: single
+
+  - make: Triumph
+    name: Speed 400
+    year: 2024
+    url: https://example.com/specs/triumph/speed400/2024
+    engine_type: single
+
+  # --- 500cc - 650cc Middleweights ---
+  - make: Honda
+    name: CBR500R
+    year: 2024
+    url: https://example.com/specs/honda/cbr500r/2024
+    engine_type: parallel_twin
+
+  - make: Honda
+    name: Rebel 500 CMX500
+    year: 2024
+    url: https://example.com/specs/honda/rebel500/2024
+    engine_type: parallel_twin
+
+  - make: Suzuki
+    name: SV650
+    year: 2024
+    url: https://example.com/specs/suzuki/sv650/2024
+    engine_type: v_twin
+
+  - make: Kawasaki
+    name: Ninja 650
+    year: 2024
+    url: https://example.com/specs/kawasaki/ninja650/2024
+    engine_type: parallel_twin
+
+  - make: Yamaha
+    name: MT-07
+    year: 2024
+    url: https://example.com/specs/yamaha/mt07/2024
+    engine_type: parallel_twin
+
+  - make: Aprilia
+    name: Tuono 660 Factory
+    year: 2024
+    url: https://example.com/specs/aprilia/tuono660factory/2024
+    engine_type: parallel_twin
+
+  - make: Ducati
+    name: Hypermotard 698 Mono
+    year: 2024
+    url: https://example.com/specs/ducati/hypermotard698/2024
+    engine_type: single
+
+  - make: Triumph
+    name: Trident 660
+    year: 2024
+    url: https://example.com/specs/triumph/trident660/2024
+    engine_type: inline_4
+
+  # --- 700cc - 900cc Super-Middleweights ---
+  - make: Yamaha
+    name: Ténéré 700
+    year: 2024
+    url: https://example.com/specs/yamaha/tenere700/2024
+    engine_type: parallel_twin
+
+  - make: Suzuki
+    name: GSX-8R
+    year: 2024
+    url: https://example.com/specs/suzuki/gsx8r/2024
+    engine_type: parallel_twin
+
+  - make: Honda
+    name: CB750 Hornet
+    year: 2024
+    url: https://example.com/specs/honda/cb750hornet/2024
+    engine_type: parallel_twin
+
+  - make: KTM
+    name: 890 Duke R
+    year: 2024
+    url: https://example.com/specs/ktm/890duker/2024
+    engine_type: parallel_twin
+
+  - make: BMW
+    name: F 900 R
+    year: 2024
+    url: https://example.com/specs/bmw/f900r/2024
+    engine_type: parallel_twin
+
+  - make: Ducati
+    name: DesertX
+    year: 2024
+    url: https://example.com/specs/ducati/desertx/2024
+    engine_type: v_twin
+
+  # --- 1000cc+ Litrebikes & Superbikes ---
+  - make: Yamaha
+    name: YZF-R1M
+    year: 2024
+    url: https://example.com/specs/yamaha/r1m/2024
+    engine_type: inline_4
+
+  - make: Ducati
+    name: Panigale V4 S
+    year: 2024
+    url: https://example.com/specs/ducati/panigalev4s/2024
+    engine_type: v_twin
+
+  - make: BMW
+    name: M 1000 RR
+    year: 2024
+    url: https://example.com/specs/bmw/m1000rr/2024
+    engine_type: inline_4
+
+  - make: Honda
+    name: CBR1000RR-R Fireblade SP
+    year: 2024
+    url: https://example.com/specs/honda/fireblade/2024
+    engine_type: inline_4
+
+  - make: Kawasaki
+    name: Ninja ZX-10R
+    year: 2024
+    url: https://example.com/specs/kawasaki/zx10r/2024
+    engine_type: inline_4
+
+  - make: KTM
+    name: 1390 Super Duke R Evo
+    year: 2024
+    url: https://example.com/specs/ktm/1390superduke/2024
+    engine_type: v_twin
+
+  - make: Suzuki
+    name: Hayabusa GSX1300R
+    year: 2024
+    url: https://example.com/specs/suzuki/hayabusa/2024
+    engine_type: inline_4
+
+  - make: BMW
+    name: R 1300 GS
+    year: 2024
+    url: https://example.com/specs/bmw/r1300gs/2024
+    engine_type: boxer
