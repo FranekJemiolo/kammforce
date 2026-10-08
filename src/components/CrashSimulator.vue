@@ -652,24 +652,25 @@ function setPresetSpeed(kmh: number) {
 }
 
 .input-card {
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #101826;
+  border: 1.5px solid #23354d;
   border-radius: 12px;
   padding: 1rem 1.15rem;
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .input-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
 }
 .input-header label {
-  font-weight: 600;
-  color: var(--muted);
+  font-weight: 700;
+  color: #cbd5e1;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -714,25 +715,26 @@ function setPresetSpeed(kmh: number) {
 }
 
 .pill-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--muted);
-  font-size: 0.68rem;
-  padding: 0.3rem 0.6rem;
+  background: #162235;
+  border: 1px solid #263850;
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 .pill-btn:hover, .pill-btn.active {
-  background: rgba(255, 107, 61, 0.18);
-  color: var(--text);
+  background: rgba(255, 107, 61, 0.22);
+  color: #ffffff;
   border-color: var(--accent);
 }
 
 .material-description {
-  font-size: 0.72rem;
-  color: var(--muted);
-  line-height: 1.4;
+  font-size: 0.76rem;
+  color: #cbd5e1;
+  line-height: 1.45;
   margin: 0;
 }
 
@@ -741,19 +743,19 @@ function setPresetSpeed(kmh: number) {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem;
-  font-size: 0.72rem;
-  padding-top: 0.4rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.74rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
-.meta-item .lbl { color: var(--muted); margin-right: 0.3rem; }
-.meta-item .val { font-weight: 700; color: var(--text); }
-.meta-item .val.ok { color: #10b989; }
-.meta-item .val.bad { color: #ef4444; }
+.meta-item .lbl { color: #94a3b8; font-weight: 600; margin-right: 0.3rem; }
+.meta-item .val { font-weight: 700; color: #f1f5f9; }
+.meta-item .val.ok { color: #3ddc97; }
+.meta-item .val.bad { color: #ff5c6c; }
 
 .range-sub {
   display: flex;
   justify-content: space-between;
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   color: var(--muted);
 }
 
@@ -765,30 +767,32 @@ function setPresetSpeed(kmh: number) {
 }
 
 .metric-card {
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #101826;
+  border: 1.5px solid #23354d;
   border-radius: 12px;
   padding: 0.85rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .metric-card.primary {
   grid-column: span 2;
-  background: rgba(255, 107, 61, 0.08);
-  border-color: rgba(255, 107, 61, 0.3);
+  background: linear-gradient(135deg, rgba(255, 107, 61, 0.16), rgba(255, 179, 71, 0.08));
+  border-color: rgba(255, 107, 61, 0.45);
 }
 
 .metric-card.hazard-card {
-  border-color: rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .m-label {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--muted);
+  color: #cbd5e1;
   font-weight: 700;
 }
 

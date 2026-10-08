@@ -289,10 +289,12 @@ async function removeGarageEntry(id: string) {
 
 .section-label {
   display: block;
-  font-size: 0.74rem;
-  color: var(--muted);
-  margin-bottom: 0.3rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .styled-select {
@@ -300,17 +302,18 @@ async function removeGarageEntry(id: string) {
 }
 
 .custom-accordion {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
+  background: #101826;
+  border: 1.5px solid #23354d;
   border-radius: 10px;
-  padding: 0.65rem 0.85rem;
-  font-size: 0.8rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.84rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .custom-accordion summary {
   cursor: pointer;
   color: var(--accent-2);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .custom-grid {
@@ -323,19 +326,26 @@ async function removeGarageEntry(id: string) {
 .input-field {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.3rem;
 }
 .input-field label {
-  font-size: 0.72rem;
-  color: var(--muted);
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  font-weight: 600;
 }
 .input-field input {
   font: inherit;
-  color: var(--text);
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border);
+  color: #ffffff;
+  background: #162032;
+  border: 1.5px solid #2c3e58;
   border-radius: 8px;
-  padding: 0.45rem 0.65rem;
+  padding: 0.55rem 0.75rem;
+  font-weight: 600;
+}
+.input-field input:focus {
+  outline: none;
+  border-color: #ff6b3d;
+  box-shadow: 0 0 0 3px rgba(255, 107, 61, 0.25);
 }
 
 .saved-garage-list {

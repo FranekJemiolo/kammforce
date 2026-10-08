@@ -200,6 +200,28 @@ async function forceRehydrate() {
   }
 }
 
+async function forceReloadFresh() {
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const r of regs) {
+        await r.update();
+      }
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      for (const k of keys) {
+        if (!k.includes('sqlite')) {
+          await caches.delete(k);
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  window.location.reload();
+}
+
 function onCornerSelected(c: TrackCorner) {
   speedKmh.value = c.speedKmh;
   radiusM.value = c.radiusM;
@@ -299,6 +321,9 @@ onMounted(boot);
               <span class="dot" :class="hydratePhase"></span>
               <span>YAML: {{ { idle: 'Wait', busy: 'Sync…', ok: 'Synced', bad: 'Offline' }[hydratePhase] }}</span>
               <button type="button" class="sync-mini-btn" @click="forceRehydrate" title="Force re-sync">↺</button>
+            </div>
+            <div class="chip reload-chip" @click="forceReloadFresh" title="Force check for app updates and refresh cache">
+              <span>↻ Refresh App</span>
             </div>
           </div>
         </div>
@@ -411,6 +436,91 @@ onMounted(boot);
 
       <!-- TAB 4: LIVE DYNAMICS CALCULATOR & VISUALIZATIONS -->
       <div v-show="activeTab === 'calc'" class="calculator-view">
+        <!-- Multi-Angle Visualizer Perspective Switcher Card -->
+        <section class="card angle-selector-card">
+          <div class="angle-header-bar">
+            <div class="angle-title-group">
+              <span class="angle-badge">CHASSIS &amp; RIDER PERSPECTIVE</span>
+              <h2 class="angle-main-title">Interactive Dynamic Telemetry Camera</h2>
+            </div>
+            <div class="angle-status-tag">
+              Active View: <strong>{{ visualizerAngle === 'rear' ? 'Rear Dynamic Roll' : visualizerAngle === 'front' ? 'Front Aero & Knee-Down' : 'Side Chassis & CoG Ruler' }}</strong>
+            </div>
+          </div>
+
+          <div class="angle-tabs-grid">
+            <button
+              type="button"
+              class="angle-tab-btn"
+              :class="{ active: visualizerAngle === 'rear' }"
+              @click="visualizerAngle = 'rear'"
+            >
+              <div class="tab-icon-wrap">🔄</div>
+              <div class="tab-text-wrap">
+                <span class="tab-heading">Rear Dynamic Roll</span>
+                <span class="tab-desc">Cossalter Lean θ &amp; Crown Shift</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              class="angle-tab-btn"
+              :class="{ active: visualizerAngle === 'front' }"
+              @click="visualizerAngle = 'front'"
+            >
+              <div class="tab-icon-wrap">🏍️</div>
+              <div class="tab-text-wrap">
+                <span class="tab-heading">Front Aero &amp; Knee-Down</span>
+                <span class="tab-desc">Knee Puck Clearance &amp; Aero Wings</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              class="angle-tab-btn"
+              :class="{ active: visualizerAngle === 'side' }"
+              @click="visualizerAngle = 'side'"
+            >
+              <div class="tab-icon-wrap">📐</div>
+              <div class="tab-text-wrap">
+                <span class="tab-heading">Side Chassis &amp; CoG Ruler</span>
+                <span class="tab-desc">Wheelbase, CoG Elevation &amp; Pitch</span>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <!-- Twin Visualizers Row -->
+        <div class="visualizers-row">
+          <!-- Active Angle Visualizer -->
+          <div class="angle-container">
+            <LeanVisualizer
+              v-if="visualizerAngle === 'rear'"
+              :telemetry="telemetry"
+              :maxMechLeanDeg="activeBike.maxMechLeanDeg"
+              :riderHangOffCm="rider.hangOffCm"
+            />
+            <FrontVisualizer
+              v-else-if="visualizerAngle === 'front'"
+              :telemetry="telemetry"
+              :maxMechLeanDeg="activeBike.maxMechLeanDeg"
+              :riderHangOffCm="rider.hangOffCm"
+            />
+            <SideVisualizer
+              v-else-if="visualizerAngle === 'side'"
+              :bike="activeBike"
+              :riderMassKg="rider.massKg"
+            />
+          </div>
+
+          <!-- Kamm Traction Circle -->
+          <KammCircle
+            :telemetry="telemetry"
+            :longitudinalG="longitudinalG"
+            @update:longitudinalG="(val) => longitudinalG = val"
+          />
+        </div>
+
         <!-- Lean Auto-Optimizer Quick Bar -->
         <section class="card quick-actions-card">
           <div class="actions-header">
@@ -534,68 +644,6 @@ onMounted(boot);
             </div>
           </div>
         </section>
-
-        <!-- Multi-Angle Visualizer Cockpit Navigation -->
-        <div class="angle-selector-bar">
-          <div class="angle-title">Multi-Angle Dynamic View:</div>
-          <div class="angle-btn-group">
-            <button
-              type="button"
-              class="angle-btn"
-              :class="{ active: visualizerAngle === 'rear' }"
-              @click="visualizerAngle = 'rear'"
-            >
-              🔄 Rear Dynamic Roll Profile
-            </button>
-            <button
-              type="button"
-              class="angle-btn"
-              :class="{ active: visualizerAngle === 'front' }"
-              @click="visualizerAngle = 'front'"
-            >
-              🏍️ Front Aero &amp; Knee-Down
-            </button>
-            <button
-              type="button"
-              class="angle-btn"
-              :class="{ active: visualizerAngle === 'side' }"
-              @click="visualizerAngle = 'side'"
-            >
-              📐 Side Chassis &amp; CoG Ruler
-            </button>
-          </div>
-        </div>
-
-        <!-- Twin Visualizers Row -->
-        <div class="visualizers-row">
-          <!-- Active Angle Visualizer -->
-          <div class="angle-container">
-            <LeanVisualizer
-              v-if="visualizerAngle === 'rear'"
-              :telemetry="telemetry"
-              :maxMechLeanDeg="activeBike.maxMechLeanDeg"
-              :riderHangOffCm="rider.hangOffCm"
-            />
-            <FrontVisualizer
-              v-else-if="visualizerAngle === 'front'"
-              :telemetry="telemetry"
-              :maxMechLeanDeg="activeBike.maxMechLeanDeg"
-              :riderHangOffCm="rider.hangOffCm"
-            />
-            <SideVisualizer
-              v-else-if="visualizerAngle === 'side'"
-              :bike="activeBike"
-              :riderMassKg="rider.massKg"
-            />
-          </div>
-
-          <!-- Kamm Traction Circle -->
-          <KammCircle
-            :telemetry="telemetry"
-            :longitudinalG="longitudinalG"
-            @update:longitudinalG="(val) => longitudinalG = val"
-          />
-        </div>
 
         <!-- Detailed Physics Breakdown Card -->
         <section class="card breakdown-card">
@@ -754,6 +802,21 @@ h1 {
   color: var(--muted);
 }
 
+.reload-chip {
+  cursor: pointer;
+  background: rgba(255, 107, 61, 0.16);
+  border-color: rgba(255, 107, 61, 0.45);
+  color: var(--accent-2);
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.reload-chip:hover {
+  background: rgba(255, 107, 61, 0.3);
+  border-color: var(--accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
 .sync-mini-btn {
   background: transparent;
   border: none;
@@ -769,32 +832,41 @@ h1 {
 
 .nav-tabs {
   display: flex;
-  gap: 0.5rem;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0.5rem;
+  gap: 0.6rem;
+  background: #0d1422;
+  border: 1.5px solid #23334b;
+  border-radius: 14px;
+  padding: 0.45rem;
   overflow-x: auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .tab-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  padding: 0.5rem 0.9rem;
-  border-radius: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--muted);
+  background: #141f30;
+  border: 1.5px solid #23354d;
+  padding: 0.65rem 1.15rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #cbd5e1;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 .tab-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  background: #1c2b42;
+  border-color: #3b567d;
+  transform: translateY(-1px);
 }
 .tab-btn.active {
-  color: var(--accent-2);
-  background: rgba(255, 107, 61, 0.12);
-  border-color: rgba(255, 107, 61, 0.3);
+  color: #ffffff;
+  background: linear-gradient(135deg, #ff6b3d, #ff8c42);
+  border-color: #ffaa5a;
+  box-shadow: 0 4px 16px rgba(255, 107, 61, 0.45);
 }
 
 .main-content {
@@ -961,47 +1033,140 @@ h1 {
   color: var(--muted);
 }
 
-.angle-selector-bar {
+.angle-selector-card {
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  background: #0f1726;
+  border: 1.5px solid #23354d;
+}
+
+.angle-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.angle-title-group {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  padding: 0.25rem 0.5rem;
 }
-.angle-title {
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
+
+.angle-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
   letter-spacing: 0.08em;
-  color: var(--muted);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(255, 107, 61, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(255, 107, 61, 0.35);
 }
 
-.angle-btn-group {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
+.angle-main-title {
+  margin: 0 !important;
+  font-size: 0.9rem !important;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: normal !important;
+  text-transform: none !important;
 }
 
-.angle-btn {
-  font-size: 0.74rem;
-  font-weight: 600;
-  padding: 0.35rem 0.7rem;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
+.angle-status-tag {
+  font-size: 0.8rem;
   color: var(--muted);
-  cursor: pointer;
-  transition: all 0.15s ease;
 }
-.angle-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
-}
-.angle-btn.active {
+.angle-status-tag strong {
   color: var(--accent-2);
-  background: rgba(255, 107, 61, 0.12);
-  border-color: rgba(255, 107, 61, 0.35);
+}
+
+.angle-tabs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 820px) {
+  .angle-tabs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.angle-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  background: #141f30;
+  border: 1.5px solid #243750;
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.angle-tab-btn:hover {
+  background: #1b2b42;
+  border-color: #3b567d;
+  transform: translateY(-2px);
+}
+
+.angle-tab-btn.active {
+  background: linear-gradient(135deg, rgba(255, 107, 61, 0.22), rgba(255, 179, 71, 0.12));
+  border-color: #ff6b3d;
+  box-shadow: 0 0 16px rgba(255, 107, 61, 0.35);
+}
+
+.tab-icon-wrap {
+  font-size: 1.4rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.angle-tab-btn.active .tab-icon-wrap {
+  background: rgba(255, 107, 61, 0.2);
+  border-color: rgba(255, 107, 61, 0.45);
+}
+
+.tab-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.tab-heading {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.angle-tab-btn.active .tab-heading {
+  color: #ffb347;
+}
+
+.tab-desc {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.angle-tab-btn.active .tab-desc {
+  color: #cbd5e1;
 }
 
 .visualizers-row {

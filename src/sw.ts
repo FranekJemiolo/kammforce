@@ -23,10 +23,17 @@ self.addEventListener('fetch', (event) => {
       let res: Response | undefined;
 
       if (sameOrigin) {
-        // Offline-first for our own assets: precache, then runtime caches, then network.
-        res = await matchPrecache(r);
-        if (!res && r.mode === 'navigate') {
-          res = await matchPrecache(new URL('index.html', self.registration.scope).href);
+        if (r.mode === 'navigate') {
+          // Network-first for HTML navigation: always get the newest deployment when online,
+          // falling back to precached index.html for offline use.
+          try {
+            res = await fetch(r);
+          } catch {
+            res = await matchPrecache(new URL('index.html', self.registration.scope).href);
+          }
+        } else {
+          // Offline-first for immutable hashed assets (JS, CSS, WASM, YAML)
+          res = await matchPrecache(r);
         }
       }
       res ??= (await caches.match(r)) ?? (await fetch(r));
