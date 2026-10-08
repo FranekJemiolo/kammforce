@@ -41,13 +41,22 @@ try {
     console.log(`saved ${OUT}/${s.name}.png`);
 
     if (s.name === 'desktop') {
-      // Also capture the Crash Kinematics tab
-      const crashTabBtn = page.locator('button.tab-btn:has-text("Crash Kinematics")');
+      // Also capture the Low-Side and High-Side Crash Simulator tab
+      const crashTabBtn = page.locator('button.tab-btn:has-text("Crash Simulator")');
       await crashTabBtn.click();
       await page.waitForSelector('.crash-sim-panel', { timeout: 10000 });
       await page.waitForTimeout(500);
       await page.screenshot({ path: `${OUT}/crash_simulator.png`, fullPage: true });
       console.log(`saved ${OUT}/crash_simulator.png`);
+
+      // Switch to High-Side mode and capture
+      const highSideBtn = page.locator('button.mode-btn:has-text("HIGH-SIDE")');
+      if (await highSideBtn.isVisible()) {
+        await highSideBtn.click();
+        await page.waitForTimeout(400);
+        await page.screenshot({ path: `${OUT}/highside_simulator.png`, fullPage: true });
+        console.log(`saved ${OUT}/highside_simulator.png`);
+      }
     }
 
     await ctx.close();

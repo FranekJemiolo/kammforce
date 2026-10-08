@@ -140,6 +140,15 @@ function setToMaxGripLimit() {
   speedKmh.value = Math.round(maxSafeSpeedKmh.value * 0.99);
 }
 
+// Crash Simulator State & Navigation
+const crashSimulatorMode = ref<'lowside' | 'highside'>('lowside');
+
+function openCrashSimulator(mode: 'lowside' | 'highside') {
+  crashSimulatorMode.value = mode;
+  activeTab.value = 'crash';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // Database & Hydration Lifecycle
 async function refreshBikes() {
   if (db) {
@@ -242,6 +251,7 @@ function syncToUrlHash() {
     s: selectedSurface.value,
     ax: longitudinalG.value,
     t: activeTab.value,
+    cm: crashSimulatorMode.value,
   };
   try {
     history.replaceState(null, '', `#${encodeURIComponent(JSON.stringify(state))}`);
@@ -264,12 +274,15 @@ function loadFromUrlHash() {
     if (state.t && ['calc', 'garage', 'presets', 'crash'].includes(state.t)) {
       activeTab.value = state.t;
     }
+    if (state.cm && ['lowside', 'highside'].includes(state.cm)) {
+      crashSimulatorMode.value = state.cm;
+    }
   } catch {
     // ignore
   }
 }
 
-watch([speedKmh, radiusM, longitudinalG, selectedSurface, rider, activeBike, activeTab], syncToUrlHash, { deep: true });
+watch([speedKmh, radiusM, longitudinalG, selectedSurface, rider, activeBike, activeTab, crashSimulatorMode], syncToUrlHash, { deep: true });
 
 onMounted(boot);
 </script>
@@ -357,11 +370,11 @@ onMounted(boot);
         </button>
         <button
           type="button"
-          class="tab-btn"
+          class="tab-btn crash-tab-btn"
           :class="{ active: activeTab === 'crash' }"
           @click="activeTab = 'crash'"
         >
-          💥 Crash Kinematics &amp; Gear
+          💥 Crash Simulator (Low &amp; High-Side)
         </button>
       </nav>
     </header>
@@ -409,6 +422,42 @@ onMounted(boot);
             <span class="v">{{ telemetry.lateralAccelG.toFixed(2) }} G</span>
           </div>
         </div>
+        <div class="alert-actions">
+          <button
+            v-if="telemetry.safetyStatus === 'lowside'"
+            type="button"
+            class="sim-action-btn pulse-glow-btn"
+            @click="openCrashSimulator('lowside')"
+          >
+            📉 Simulate Low-Side Washout ({{ speedKmh }} km/h) →
+          </button>
+          <button
+            v-else-if="telemetry.safetyStatus === 'highside'"
+            type="button"
+            class="sim-action-btn pulse-glow-btn highside-theme"
+            @click="openCrashSimulator('highside')"
+          >
+            🚀 Simulate High-Side Catapult ({{ speedKmh }} km/h) →
+          </button>
+          <div v-else class="sim-action-links">
+            <button
+              type="button"
+              class="sim-action-btn secondary"
+              @click="openCrashSimulator('lowside')"
+              title="Simulate front or rear slide washout and sliding distance"
+            >
+              📉 Low-Side Sim
+            </button>
+            <button
+              type="button"
+              class="sim-action-btn secondary"
+              @click="openCrashSimulator('highside')"
+              title="Simulate rear snap grip bite and catapult flight arc"
+            >
+              🚀 High-Side Sim
+            </button>
+          </div>
+        </div>
       </section>
 
       <!-- TAB 1: CIRCUIT PRESETS -->
@@ -426,11 +475,12 @@ onMounted(boot);
       </section>
 
       <!-- TAB 3: CRASH KINEMATICS & GEAR SIMULATOR -->
-      <section v-if="activeTab === 'crash'" class="card">
+      <section v-if="activeTab === 'crash'" class="card crash-card-container">
         <CrashSimulator
           :telemetrySpeedKmh="speedKmh"
           :riderMassKg="rider.massKg"
           :useImperial="useImperial"
+          :initialMode="crashSimulatorMode"
         />
       </section>
 
@@ -546,6 +596,42 @@ onMounted(boot);
             <button type="button" class="opt-btn ok" @click="optimizeHangOff">
               🛡️ Auto-Hang-off for 4° Margin
             </button>
+          </div>
+        </section>
+
+        <!-- Crash Kinematics & Limit Loss Direct Launchers -->
+        <section class="card crash-entry-card">
+          <div class="crash-card-header">
+            <div>
+              <span class="section-tag alert">LIMIT LOSS &amp; EJECTION DYNAMICS</span>
+              <h2 class="crash-card-title">💥 Crash Simulator: Low-Side Washout vs High-Side Catapult</h2>
+            </div>
+            <span class="crash-card-sub">Client-side physics modeling of loss of adhesion and kinetic energy dissipation</span>
+          </div>
+          <div class="crash-entry-grid">
+            <div class="crash-entry-box lowside-box" @click="openCrashSimulator('lowside')" role="button" tabindex="0">
+              <div class="box-badge lowside-badge">📉 LOW-SIDE SIMULATOR</div>
+              <div class="box-title">Washout &amp; Pavement Slide</div>
+              <p class="box-desc">
+                Tire exceeds maximum adhesion limit. The chassis falls inward and slides flat. Analyze fairing vs rider gear sliding separation distance and abrasion risk.
+              </p>
+              <div class="box-cta">
+                <span>Simulate Washout at {{ speedKmh }} km/h &amp; {{ telemetry.toroidalBikeLeanDeg.toFixed(1) }}° Lean</span>
+                <span class="arrow">→</span>
+              </div>
+            </div>
+
+            <div class="crash-entry-box highside-box" @click="openCrashSimulator('highside')" role="button" tabindex="0">
+              <div class="box-badge highside-badge">🚀 HIGH-SIDE SIMULATOR</div>
+              <div class="box-title">Catapult Snap &amp; Ejection Flight</div>
+              <p class="box-desc">
+                Rear tire breaks traction in yaw slip, then suddenly bites grip. Instantaneous roll torque turns the bike into a lever, catapulting the rider. Calculate apex height, flight time, and ground impact Gs.
+              </p>
+              <div class="box-cta">
+                <span>Simulate Catapult at {{ speedKmh }} km/h &amp; {{ telemetry.toroidalBikeLeanDeg.toFixed(1) }}° Lean</span>
+                <span class="arrow">→</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -876,11 +962,12 @@ h1 {
 }
 
 .alert-banner {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 1.25rem;
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.35rem;
   border-radius: 14px;
   backdrop-filter: blur(14px);
   border: 1px solid var(--border);
@@ -912,12 +999,14 @@ h1 {
 }
 
 .alert-icon { font-size: 1.8rem; }
+.alert-body { flex: 1 1 300px; min-width: 260px; }
 .alert-title { font-size: 0.92rem; font-weight: 800; letter-spacing: 0.05em; color: var(--text); }
 .alert-desc { font-size: 0.82rem; color: var(--text); margin-top: 0.2rem; opacity: 0.9; }
 
 .alert-kpi {
   display: flex;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 .kpi-box {
   display: flex;
@@ -929,6 +1018,173 @@ h1 {
 }
 .kpi-box .k { font-size: 0.68rem; color: var(--muted); }
 .kpi-box .v { font-size: 1rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+
+.alert-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+.sim-action-links {
+  display: flex;
+  gap: 0.5rem;
+}
+.sim-action-btn {
+  background: linear-gradient(135deg, #ff6b3d, #ff3d5a);
+  border: 1.5px solid #ffa17a;
+  color: #ffffff;
+  padding: 0.6rem 1.1rem;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px rgba(255, 61, 90, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+.sim-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 61, 90, 0.6);
+  border-color: #ffffff;
+}
+.sim-action-btn.secondary {
+  background: #142032;
+  border: 1.5px solid #294061;
+  color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.sim-action-btn.secondary:hover {
+  background: #1d2e48;
+  border-color: #ff6b3d;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(255, 107, 61, 0.35);
+}
+.sim-action-btn.highside-theme {
+  background: linear-gradient(135deg, #ff3d5a, #d62246);
+  border-color: #ff758c;
+  box-shadow: 0 4px 14px rgba(214, 34, 70, 0.45);
+}
+
+.crash-card-container {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.crash-entry-card {
+  padding: 1.25rem 1.4rem;
+  background: linear-gradient(180deg, rgba(20, 30, 48, 0.85), rgba(13, 20, 34, 0.98));
+  border: 1.5px solid #23354d;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 14px;
+}
+.crash-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.crash-card-title {
+  margin: 0.25rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+.crash-card-sub {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+.crash-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.1rem;
+}
+.crash-entry-box {
+  background: #0d1524;
+  border: 1.5px solid #1f2f47;
+  border-radius: 12px;
+  padding: 1.2rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  position: relative;
+  overflow: hidden;
+}
+.crash-entry-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+}
+.crash-entry-box.lowside-box:hover {
+  border-color: #ff8c42;
+  box-shadow: 0 10px 28px rgba(255, 140, 66, 0.25);
+}
+.crash-entry-box.highside-box:hover {
+  border-color: #ff3d5a;
+  box-shadow: 0 10px 28px rgba(255, 61, 90, 0.25);
+}
+.box-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+.box-badge.lowside-badge {
+  background: rgba(255, 140, 66, 0.15);
+  border: 1px solid rgba(255, 140, 66, 0.4);
+  color: #ffaa5a;
+}
+.box-badge.highside-badge {
+  background: rgba(255, 61, 90, 0.15);
+  border: 1px solid rgba(255, 61, 90, 0.4);
+  color: #ff758c;
+}
+.box-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+.box-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  line-height: 1.45;
+  flex-grow: 1;
+}
+.box-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #1a273b;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.crash-entry-box:hover .box-cta {
+  color: #ffffff;
+}
+.box-cta .arrow {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+.crash-entry-box:hover .box-cta .arrow {
+  transform: translateX(4px);
+}
 
 .calculator-view {
   display: flex;

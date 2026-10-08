@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateSlidePhysics, GEAR_MATERIALS } from '../kinematics';
+import { calculateHighSidePhysics, calculateLowSidePhysics, calculateSlidePhysics, GEAR_MATERIALS } from '../kinematics';
 
 describe('Crash Kinematics & Gear Simulation', () => {
   it('correctly maps gear materials to friction coefficients', () => {
@@ -54,5 +54,30 @@ describe('Crash Kinematics & Gear Simulation', () => {
     expect(res.slideDistanceMeters).toBe(0);
     expect(res.slideDurationSeconds).toBe(0);
     expect(res.tumbleRisk).toBe(false);
+  });
+
+  it('calculates High-Side crash catapult apex height and flight distance', () => {
+    // 120 km/h = 33.33 m/s, lean 52 deg, slip angle 22 deg
+    const v = 120 / 3.6;
+    const res = calculateHighSidePhysics(v, 52, 22, 78, 200, 0.45);
+
+    // Ejection apex height should be significantly above seat height (> 1.5m)
+    expect(res.apexHeightMeters).toBeGreaterThan(1.5);
+    expect(res.airborneDurationSeconds).toBeGreaterThan(0.5);
+    expect(res.flightDistanceMeters).toBeGreaterThan(10);
+    expect(res.groundImpactVelocityKmh).toBeGreaterThan(100);
+    expect(res.totalCrashDistanceMeters).toBeGreaterThan(res.flightDistanceMeters);
+  });
+
+  it('calculates Low-Side crash separation distance between bike and rider', () => {
+    // 100 km/h = 27.78 m/s, lean 50 deg
+    const v = 100 / 3.6;
+    const res = calculateLowSidePhysics(v, 50, 'front', 78, 200, 0.45);
+
+    // Bike fairings slide on lower friction (mu ~ 0.28) than leathers (mu = 0.45),
+    // so bike slides farther than rider
+    expect(res.bikeSlideDistanceMeters).toBeGreaterThan(res.riderSlideDistanceMeters);
+    expect(res.separationDistanceMeters).toBeGreaterThan(10);
+    expect(res.dropDurationSeconds).toBeGreaterThan(0.1);
   });
 });
