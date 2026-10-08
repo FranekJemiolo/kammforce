@@ -422,7 +422,7 @@ onMounted(boot);
             <span class="v">{{ telemetry.lateralAccelG.toFixed(2) }} G</span>
           </div>
         </div>
-        <div class="alert-actions">
+        <div class="alert-actions" v-if="telemetry.safetyStatus === 'lowside' || telemetry.safetyStatus === 'highside'">
           <button
             v-if="telemetry.safetyStatus === 'lowside'"
             type="button"
@@ -439,24 +439,6 @@ onMounted(boot);
           >
             🚀 Simulate High-Side Catapult ({{ speedKmh }} km/h) →
           </button>
-          <div v-else class="sim-action-links">
-            <button
-              type="button"
-              class="sim-action-btn secondary"
-              @click="openCrashSimulator('lowside')"
-              title="Simulate front or rear slide washout and sliding distance"
-            >
-              📉 Low-Side Sim
-            </button>
-            <button
-              type="button"
-              class="sim-action-btn secondary"
-              @click="openCrashSimulator('highside')"
-              title="Simulate rear snap grip bite and catapult flight arc"
-            >
-              🚀 High-Side Sim
-            </button>
-          </div>
         </div>
       </section>
 
@@ -599,42 +581,6 @@ onMounted(boot);
           </div>
         </section>
 
-        <!-- Crash Kinematics & Limit Loss Direct Launchers -->
-        <section class="card crash-entry-card">
-          <div class="crash-card-header">
-            <div>
-              <span class="section-tag alert">LIMIT LOSS &amp; EJECTION DYNAMICS</span>
-              <h2 class="crash-card-title">💥 Crash Simulator: Low-Side Washout vs High-Side Catapult</h2>
-            </div>
-            <span class="crash-card-sub">Client-side physics modeling of loss of adhesion and kinetic energy dissipation</span>
-          </div>
-          <div class="crash-entry-grid">
-            <div class="crash-entry-box lowside-box" @click="openCrashSimulator('lowside')" role="button" tabindex="0">
-              <div class="box-badge lowside-badge">📉 LOW-SIDE SIMULATOR</div>
-              <div class="box-title">Washout &amp; Pavement Slide</div>
-              <p class="box-desc">
-                Tire exceeds maximum adhesion limit. The chassis falls inward and slides flat. Analyze fairing vs rider gear sliding separation distance and abrasion risk.
-              </p>
-              <div class="box-cta">
-                <span>Simulate Washout at {{ speedKmh }} km/h &amp; {{ telemetry.toroidalBikeLeanDeg.toFixed(1) }}° Lean</span>
-                <span class="arrow">→</span>
-              </div>
-            </div>
-
-            <div class="crash-entry-box highside-box" @click="openCrashSimulator('highside')" role="button" tabindex="0">
-              <div class="box-badge highside-badge">🚀 HIGH-SIDE SIMULATOR</div>
-              <div class="box-title">Catapult Snap &amp; Ejection Flight</div>
-              <p class="box-desc">
-                Rear tire breaks traction in yaw slip, then suddenly bites grip. Instantaneous roll torque turns the bike into a lever, catapulting the rider. Calculate apex height, flight time, and ground impact Gs.
-              </p>
-              <div class="box-cta">
-                <span>Simulate Catapult at {{ speedKmh }} km/h &amp; {{ telemetry.toroidalBikeLeanDeg.toFixed(1) }}° Lean</span>
-                <span class="arrow">→</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <!-- Interactive Controls Card -->
         <section class="card controls-card">
           <h2>Cornering &amp; Rider Telemetry Controls</h2>
@@ -767,6 +713,24 @@ onMounted(boot);
               </div>
             </div>
           </div>
+        </section>
+
+        <!-- Limit Loss & Crash Dynamics Footer Bridge -->
+        <section class="card crash-footer-bridge">
+          <div class="bridge-left">
+            <span class="bridge-tag">💥 LIMIT LOSS PHYSICS</span>
+            <h3>Explore Low-Side &amp; High-Side Crash Dynamics</h3>
+            <p>
+              Simulate pavement friction sliding distances, bike vs rider fairing separation, and high-side airborne catapult ejection arcs based on your active telemetry.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="bridge-btn"
+            @click="activeTab = 'crash'"
+          >
+            Open Crash Simulator →
+          </button>
         </section>
       </div>
     </main>
@@ -1075,115 +1039,65 @@ h1 {
   border: none;
 }
 
-.crash-entry-card {
+.crash-footer-bridge {
   padding: 1.25rem 1.4rem;
-  background: linear-gradient(180deg, rgba(20, 30, 48, 0.85), rgba(13, 20, 34, 0.98));
+  background: linear-gradient(135deg, rgba(20, 30, 48, 0.85), rgba(13, 20, 34, 0.95));
   border: 1.5px solid #23354d;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
   border-radius: 14px;
-}
-.crash-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.crash-card-title {
-  margin: 0.25rem 0 0;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.01em;
-}
-.crash-card-sub {
-  font-size: 0.82rem;
-  color: #94a3b8;
-  font-style: italic;
-}
-.crash-entry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.1rem;
-}
-.crash-entry-box {
-  background: #0d1524;
-  border: 1.5px solid #1f2f47;
-  border-radius: 12px;
-  padding: 1.2rem 1.25rem;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  position: relative;
-  overflow: hidden;
-}
-.crash-entry-box:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
-}
-.crash-entry-box.lowside-box:hover {
-  border-color: #ff8c42;
-  box-shadow: 0 10px 28px rgba(255, 140, 66, 0.25);
-}
-.crash-entry-box.highside-box:hover {
-  border-color: #ff3d5a;
-  box-shadow: 0 10px 28px rgba(255, 61, 90, 0.25);
-}
-.box-badge {
-  display: inline-block;
-  align-self: flex-start;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  padding: 0.25rem 0.6rem;
-  border-radius: 6px;
-}
-.box-badge.lowside-badge {
-  background: rgba(255, 140, 66, 0.15);
-  border: 1px solid rgba(255, 140, 66, 0.4);
-  color: #ffaa5a;
-}
-.box-badge.highside-badge {
-  background: rgba(255, 61, 90, 0.15);
-  border: 1px solid rgba(255, 61, 90, 0.4);
-  color: #ff758c;
-}
-.box-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #ffffff;
-}
-.box-desc {
-  margin: 0;
-  font-size: 0.82rem;
-  color: #94a3b8;
-  line-height: 1.45;
-  flex-grow: 1;
-}
-.box-cta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 0.5rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid #1a273b;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--accent);
+  flex-wrap: wrap;
+  gap: 1.25rem;
 }
-.crash-entry-box:hover .box-cta {
+
+.bridge-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1 1 360px;
+}
+
+.bridge-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ff8c42;
+}
+
+.bridge-left h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
   color: #ffffff;
 }
-.box-cta .arrow {
-  font-size: 1.1rem;
-  transition: transform 0.2s ease;
+
+.bridge-left p {
+  margin: 0;
+  font-size: 0.83rem;
+  color: #94a3b8;
+  line-height: 1.4;
 }
-.crash-entry-box:hover .box-cta .arrow {
-  transform: translateX(4px);
+
+.bridge-btn {
+  background: linear-gradient(135deg, #ff6b3d, #ff3d5a);
+  border: 1.5px solid #ffa17a;
+  color: #ffffff;
+  padding: 0.75rem 1.35rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px rgba(255, 61, 90, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.bridge-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 61, 90, 0.55);
+  border-color: #ffffff;
 }
 
 .calculator-view {
